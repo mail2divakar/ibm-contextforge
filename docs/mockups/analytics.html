@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Analytics — AppGraph</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #1D3269;
+    --accent: #00A8CC;
+    --bg: #FFFFFF;
+    --surface: #F8FAFC;
+    --border: #E2E8F0;
+    --fg: #0F172A;
+    --muted: #64748B;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html, body {
+    min-width: 1440px;
+    min-height: 100vh;
+    font-family: var(--font);
+    background: var(--surface);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { display: flex; min-height: 100vh; width: 1440px; margin: 0 auto; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px; min-height: 100vh;
+    background: rgba(29,50,105,0.88);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh; flex-shrink: 0;
+  }
+  .sidebar-logo { padding: 28px 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.10); margin-bottom: 8px; }
+  .sidebar-logo .brand { font-size: 18px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.3px; line-height: 1.2; }
+  .sidebar-logo .sub { font-size: 11px; font-weight: 500; color: rgba(0,168,204,0.90); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+  .nav { flex: 1; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px; cursor: pointer;
+    text-decoration: none; font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,0.65); border-left: 3px solid transparent;
+    transition: background 0.15s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.90); }
+  .nav-item.active { background: rgba(0,168,204,0.20); border-left: 3px solid #00A8CC; color: #FFFFFF; font-weight: 600; }
+  .nav-item .icon { font-size: 16px; flex-shrink: 0; width: 20px; text-align: center; }
+  .nav-section-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.30); padding: 14px 14px 6px; }
+  .sidebar-footer { padding: 16px 16px 24px; border-top: 1px solid rgba(255,255,255,0.10); }
+  .avatar-row { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #00A8CC 0%, #1D3269 100%); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .avatar-info .name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.92); line-height: 1.2; }
+  .avatar-info .role { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  /* ── Topbar ── */
+  .topbar {
+    height: 56px; background: #FFFFFF; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; position: sticky; top: 0; z-index: 100; flex-shrink: 0;
+  }
+  .topbar-title { font-size: 17px; font-weight: 700; color: var(--fg); letter-spacing: -0.3px; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-meta { font-size: 12.5px; color: var(--muted); }
+  .topbar-meta strong { color: var(--fg); font-weight: 600; }
+  .btn-refresh {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+    font-family: var(--font); box-shadow: 0 2px 8px rgba(0,168,204,0.30);
+  }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    background: #FFFFFF; border-bottom: 1px solid var(--border);
+    padding: 12px 32px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  }
+  .filter-label { font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.3px; margin-right: 4px; }
+  .filter-select {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 12px; font-size: 13px; font-weight: 500; color: var(--fg);
+    font-family: var(--font); cursor: pointer; appearance: none;
+    padding-right: 28px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 8px center;
+  }
+  .filter-select.active { border-color: var(--accent); background-color: rgba(0,168,204,0.06); color: var(--primary); }
+  .filter-badge {
+    background: var(--accent); color: #fff; border-radius: 50%; width: 18px; height: 18px;
+    font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    margin-left: -6px; margin-top: -10px;
+  }
+  .clear-filters { font-size: 12.5px; font-weight: 500; color: var(--accent); cursor: pointer; margin-left: 4px; }
+  .filter-spacer { flex: 1; }
+  .filter-count-chip {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 4px 12px; font-size: 12px; font-weight: 500; color: var(--muted);
+  }
+
+  /* ── Content ── */
+  .content { flex: 1; padding: 28px 32px; background: var(--surface); display: flex; flex-direction: column; gap: 24px; }
+
+  /* ── Card ── */
+  .card { background: #FFFFFF; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 2px 8px rgba(29,50,105,0.06); padding: 24px; }
+  .card-divider { height: 1px; background: var(--border); margin: 0 -24px 20px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--fg); letter-spacing: -0.2px; }
+  .section-badge { font-size: 11.5px; font-weight: 500; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; }
+  .table-toggle { font-size: 12px; font-weight: 500; color: var(--accent); cursor: pointer; border: 1px solid rgba(0,168,204,0.3); border-radius: 6px; padding: 3px 10px; }
+
+  /* ── Two column grid ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  /* ── Badge ── */
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-teal { background: rgba(0,168,204,0.12); color: #007A96; }
+  .badge-warning { background: rgba(245,158,11,0.12); color: #B45309; }
+
+  /* ── Horizontal bar chart ── */
+  .bar-chart-container { display: flex; flex-direction: column; gap: 0; }
+  .bar-row { display: grid; grid-template-columns: 160px 1fr 44px; align-items: center; gap: 12px; padding: 6px 0; border-bottom: 1px solid rgba(226,232,240,0.5); }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-label { font-size: 12.5px; color: var(--fg); font-weight: 500; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { height: 26px; background: var(--surface); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; background: var(--primary); border-radius: 6px; }
+  .bar-fill.accent-fill { background: var(--accent); }
+  .bar-fill.success-fill { background: var(--success); }
+  .bar-fill.muted-fill { background: #CBD5E1; }
+  .bar-count { font-size: 13px; font-weight: 700; color: var(--primary); text-align: right; }
+
+  /* ── Donut ── */
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .donut-svg-area { position: relative; width: 180px; height: 180px; }
+  .donut-svg { width: 180px; height: 180px; transform: rotate(-90deg); }
+  .donut-center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; pointer-events: none; }
+  .donut-center-label .big { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -1px; display: block; line-height: 1; }
+  .donut-center-label .small { font-size: 11px; color: var(--muted); font-weight: 500; display: block; margin-top: 3px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .legend-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .legend-dot-label { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-name { font-size: 13px; font-weight: 500; color: var(--fg); }
+  .legend-count-pct { display: flex; align-items: center; gap: 8px; }
+  .legend-count { font-size: 13px; font-weight: 700; color: var(--fg); }
+  .legend-pct { font-size: 11.5px; color: var(--muted); min-width: 38px; text-align: right; }
+
+  /* ── Data table (inside card, below chart) ── */
+  .data-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .data-table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .data-table th:last-child { text-align: right; }
+  .data-table td { font-size: 13px; color: var(--fg); padding: 7px 8px; border-bottom: 1px solid rgba(226,232,240,0.4); }
+  .data-table td:last-child { text-align: right; font-weight: 600; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(248,250,252,1); }
+
+  /* ── Vendor concentration ── */
+  .vendor-row { display: flex; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid rgba(226,232,240,0.5); }
+  .vendor-row:last-child { border-bottom: none; }
+  .vendor-rank { font-size: 13px; font-weight: 700; color: var(--muted); width: 20px; flex-shrink: 0; }
+  .vendor-name { font-size: 14px; font-weight: 600; color: var(--fg); flex: 1; }
+  .vendor-apps { display: flex; gap: 6px; flex-wrap: wrap; flex: 2; }
+  .vendor-app-pill { font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2px 8px; color: var(--muted); }
+  .vendor-count-badge { background: rgba(29,50,105,0.10); color: var(--primary); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+  /* ── Arch grid ── */
+  .arch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; margin-top: 4px; }
+  .arch-item { display: flex; flex-direction: column; gap: 6px; }
+  .arch-name { font-size: 12.5px; font-weight: 600; color: var(--fg); line-height: 1.3; }
+  .arch-count { font-size: 22px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+  .arch-track { height: 6px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+  .arch-fill { height: 100%; background: var(--accent); border-radius: 99px; }
+  .arch-fill.muted-fill { background: #CBD5E1; }
+  .arch-pct { font-size: 11px; color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">KSquare Group</div>
+      <div class="sub">AppGraph</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="#">
+        <span class="icon">🏠</span>Dashboard
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon">💬</span>Query
+      </a>
+      <a class="nav-item active" href="#">
+        <span class="icon">📊</span>Analytics
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon">🔗</span>Redundancy
+      </a>
+      <a class="nav-item" href="#">
+        <span class="icon">📋</span>Applications
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar-row">
+        <div class="avatar">UK</div>
+        <div class="avatar-info">
+          <div class="name">Uday Kumar</div>
+          <div class="role">T&amp;D</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <span class="topbar-title">Analytics</span>
+      <div class="topbar-right">
+        <span class="topbar-meta">Last refresh: <strong>Jun 12, 2026</strong> · 1,250 apps</span>
+        <button class="btn-refresh">Refresh Data</button>
+      </div>
+    </header>
+
+    <!-- Filter bar — Business Process filter active -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+
+      <!-- Business Process filter — active (Imaging selected) -->
+      <div style="position:relative; display:inline-block;">
+        <select class="filter-select active">
+          <option>Business Process: Imaging</option>
+        </select>
+        <span class="filter-badge" style="position:absolute; top:-6px; right:-6px;">1</span>
+      </div>
+
+      <select class="filter-select">
+        <option>Application Type: All</option>
+        <option>COTS</option>
+        <option>Homegrown</option>
+      </select>
+
+      <select class="filter-select">
+        <option>Company: All</option>
+      </select>
+
+      <select class="filter-select">
+        <option>Baptist Managed: All</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+
+      <span class="clear-filters">✕ Clear filters</span>
+
+      <div class="filter-spacer"></div>
+      <span class="filter-count-chip">Showing 67 of 1,250 apps</span>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Row 1: Distribution by Type + Architecture ── -->
+      <div class="two-col">
+
+        <!-- Application Type breakdown (Imaging filtered) -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Application Type</span>
+            <span class="table-toggle">Show table ↓</span>
+          </div>
+          <div class="card-divider"></div>
+
+          <div style="display:flex; gap:32px; align-items:center;">
+            <!-- Mini donut -->
+            <div class="donut-svg-area" style="width:160px; height:160px;">
+              <!-- Imaging: ~62 COTS, ~3 Homegrown, ~2 Unclassified out of 67 -->
+              <!-- COTS 62/67=92.5% · Homegrown 3/67=4.5% · Uncl 2/67=3% -->
+              <!-- circumference = 2π×60 ≈ 376.99 -->
+              <!-- COTS: 376.99*0.925=348.72 off=0 -->
+              <!-- Homegrown: 376.99*0.045=16.96 off=-348.72 -->
+              <!-- Uncl: 376.99*0.03=11.31 off=-365.68 -->
+              <svg class="donut-svg" viewBox="0 0 160 160" style="width:160px;height:160px;">
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#E2E8F0" stroke-width="22"/>
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#CBD5E1" stroke-width="22" stroke-dasharray="11.31 376.99" stroke-dashoffset="-365.68"/>
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#1D3269" stroke-width="22" stroke-dasharray="348.72 376.99" stroke-dashoffset="0"/>
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#00A8CC" stroke-width="22" stroke-dasharray="16.96 376.99" stroke-dashoffset="-348.72"/>
+              </svg>
+              <div class="donut-center-label">
+                <span class="big">67</span>
+                <span class="small">Imaging</span>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="donut-legend" style="flex:1;">
+              <div class="legend-row">
+                <div class="legend-dot-label">
+                  <span class="legend-dot" style="background:#1D3269;"></span>
+                  <span class="legend-name">COTS</span>
+                </div>
+                <div class="legend-count-pct">
+                  <span class="legend-count">62</span>
+                  <span class="legend-pct">92.5%</span>
+                </div>
+              </div>
+              <div class="legend-row">
+                <div class="legend-dot-label">
+                  <span class="legend-dot" style="background:#00A8CC;"></span>
+                  <span class="legend-name">Homegrown</span>
+                </div>
+                <div class="legend-count-pct">
+                  <span class="legend-count">3</span>
+                  <span class="legend-pct">4.5%</span>
+                </div>
+              </div>
+              <div class="legend-row">
+                <div class="legend-dot-label">
+                  <span class="legend-dot" style="background:#CBD5E1;"></span>
+                  <span class="legend-name">Unclassified</span>
+                </div>
+                <div class="legend-count-pct">
+                  <span class="legend-count">2</span>
+                  <span class="legend-pct">3.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Architecture Types (Imaging filtered) -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Architecture Types</span>
+            <span class="table-toggle">Show table ↓</span>
+          </div>
+          <div class="card-divider"></div>
+
+          <div class="arch-grid" style="grid-template-columns: repeat(3,1fr); gap:16px;">
+            <div class="arch-item">
+              <div class="arch-name">Client Server</div>
+              <div class="arch-count">18</div>
+              <div class="arch-track"><div class="arch-fill" style="width:100%;"></div></div>
+              <div class="arch-pct">26.9%</div>
+            </div>
+            <div class="arch-item">
+              <div class="arch-name">Platform Host</div>
+              <div class="arch-count">12</div>
+              <div class="arch-track"><div class="arch-fill" style="width:66%;"></div></div>
+              <div class="arch-pct">17.9%</div>
+            </div>
+            <div class="arch-item">
+              <div class="arch-name">Web Based</div>
+              <div class="arch-count">5</div>
+              <div class="arch-track"><div class="arch-fill" style="width:27%;"></div></div>
+              <div class="arch-pct">7.5%</div>
+            </div>
+            <div class="arch-item">
+              <div class="arch-name">N-Tier</div>
+              <div class="arch-count">1</div>
+              <div class="arch-track"><div class="arch-fill" style="width:5%;"></div></div>
+              <div class="arch-pct">1.5%</div>
+            </div>
+            <div class="arch-item">
+              <div class="arch-name">Other</div>
+              <div class="arch-count">2</div>
+              <div class="arch-track"><div class="arch-fill" style="width:11%;"></div></div>
+              <div class="arch-pct">3.0%</div>
+            </div>
+            <div class="arch-item">
+              <div class="arch-name" style="color:var(--muted);">Unclassified</div>
+              <div class="arch-count" style="color:var(--muted);font-size:18px;">29</div>
+              <div class="arch-track"><div class="arch-fill muted-fill" style="width:100%;"></div></div>
+              <div class="arch-pct">43.3%</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /two-col -->
+
+      <!-- ── Row 2: Business Process distribution ── -->
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Distribution by Business Process</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="section-badge">All 47 processes</span>
+            <span class="table-toggle">Show table ↓</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">
+          <!-- Left column: top 10 -->
+          <div class="bar-chart-container">
+            <div class="bar-row">
+              <span class="bar-label">Technology &amp; Digital</span>
+              <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
+              <span class="bar-count">161</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Radiation Oncology</span>
+              <div class="bar-track"><div class="bar-fill" style="width:54.7%;"></div></div>
+              <span class="bar-count">88</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">TD Infrastructure</span>
+              <div class="bar-track"><div class="bar-fill" style="width:50.9%;"></div></div>
+              <span class="bar-count">82</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label" style="color:var(--accent); font-weight:600;">Imaging ← filtered</span>
+              <div class="bar-track" style="background:rgba(0,168,204,0.10);">
+                <div class="bar-fill accent-fill" style="width:41.6%;"></div>
+              </div>
+              <span class="bar-count" style="color:var(--accent);">67</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Laboratory</span>
+              <div class="bar-track"><div class="bar-fill" style="width:30.4%;"></div></div>
+              <span class="bar-count">49</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Pharmacy</span>
+              <div class="bar-track"><div class="bar-fill" style="width:29.8%;"></div></div>
+              <span class="bar-count">48</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Nursing</span>
+              <div class="bar-track"><div class="bar-fill" style="width:27.9%;"></div></div>
+              <span class="bar-count">45</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Administration</span>
+              <div class="bar-track"><div class="bar-fill" style="width:26.7%;"></div></div>
+              <span class="bar-count">43</span>
+            </div>
+          </div>
+          <!-- Right column: 9-16 -->
+          <div class="bar-chart-container">
+            <div class="bar-row">
+              <span class="bar-label">Baptist Health Medical Group</span>
+              <div class="bar-track"><div class="bar-fill" style="width:18%;"></div></div>
+              <span class="bar-count">29</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Emergency Services</span>
+              <div class="bar-track"><div class="bar-fill" style="width:15%;"></div></div>
+              <span class="bar-count">24</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Cardiology</span>
+              <div class="bar-track"><div class="bar-fill" style="width:13%;"></div></div>
+              <span class="bar-count">21</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Surgery</span>
+              <div class="bar-track"><div class="bar-fill" style="width:11.2%;"></div></div>
+              <span class="bar-count">18</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Finance</span>
+              <div class="bar-track"><div class="bar-fill" style="width:9.3%;"></div></div>
+              <span class="bar-count">15</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Human Resources</span>
+              <div class="bar-track"><div class="bar-fill" style="width:7.5%;"></div></div>
+              <span class="bar-count">12</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Pathology</span>
+              <div class="bar-track"><div class="bar-fill" style="width:6.8%;"></div></div>
+              <span class="bar-count">11</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label" style="color:var(--muted); font-style:italic;">+ 31 more processes</span>
+              <div class="bar-track"><div class="bar-fill muted-fill" style="width:100%;"></div></div>
+              <span class="bar-count" style="color:var(--muted);">192</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Row 3: Company distribution + Baptist Managed ── -->
+      <div class="two-col">
+
+        <!-- By Company -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Distribution by Company</span>
+            <span class="table-toggle">Show table ↓</span>
+          </div>
+          <div class="card-divider"></div>
+          <div class="bar-chart-container">
+            <div class="bar-row">
+              <span class="bar-label">Baptist Health South Florida</span>
+              <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
+              <span class="bar-count">987</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Doctors Hospital</span>
+              <div class="bar-track"><div class="bar-fill" style="width:11%;"></div></div>
+              <span class="bar-count">109</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">South Miami Hospital</span>
+              <div class="bar-track"><div class="bar-fill" style="width:6%;"></div></div>
+              <span class="bar-count">59</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Homestead Hospital</span>
+              <div class="bar-track"><div class="bar-fill" style="width:5%;"></div></div>
+              <span class="bar-count">48</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Mariners Hospital</span>
+              <div class="bar-track"><div class="bar-fill" style="width:4.8%;"></div></div>
+              <span class="bar-count">47</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Baptist Managed breakdown -->
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Baptist Managed vs Vendor Managed</span>
+            <span class="table-toggle">Show table ↓</span>
+          </div>
+          <div class="card-divider"></div>
+
+          <div style="display:flex; gap:32px; align-items:center; justify-content:center; padding:8px 0;">
+            <div class="donut-svg-area" style="width:160px;height:160px;">
+              <!-- Baptist 428/1250=34.2%, Vendor 763/1250=61.0%, Unknown 59=4.7% -->
+              <!-- circ = 2π*60 ≈ 376.99 -->
+              <!-- Baptist: 376.99*0.342=128.93 off=0 -->
+              <!-- Vendor: 376.99*0.610=229.96 off=-128.93 -->
+              <!-- Unknown: 376.99*0.047=17.72 off=-358.89 -->
+              <svg class="donut-svg" viewBox="0 0 160 160" style="width:160px;height:160px;">
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#E2E8F0" stroke-width="22"/>
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#CBD5E1" stroke-width="22" stroke-dasharray="17.72 376.99" stroke-dashoffset="-358.89"/>
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#1D3269" stroke-width="22" stroke-dasharray="128.93 376.99" stroke-dashoffset="0"/>
+                <circle cx="80" cy="80" r="60" fill="none" stroke="#00A8CC" stroke-width="22" stroke-dasharray="229.96 376.99" stroke-dashoffset="-128.93"/>
+              </svg>
+              <div class="donut-center-label">
+                <span class="big">1,250</span>
+                <span class="small">Total</span>
+              </div>
+            </div>
+            <div class="donut-legend" style="flex:1;">
+              <div class="legend-row">
+                <div class="legend-dot-label">
+                  <span class="legend-dot" style="background:#1D3269;"></span>
+                  <span class="legend-name">Baptist Managed</span>
+                </div>
+                <div class="legend-count-pct">
+                  <span class="legend-count">428</span>
+                  <span class="legend-pct">34.2%</span>
+                </div>
+              </div>
+              <div class="legend-row">
+                <div class="legend-dot-label">
+                  <span class="legend-dot" style="background:#00A8CC;"></span>
+                  <span class="legend-name">Vendor Managed</span>
+                </div>
+                <div class="legend-count-pct">
+                  <span class="legend-count">763</span>
+                  <span class="legend-pct">61.0%</span>
+                </div>
+              </div>
+              <div class="legend-row">
+                <div class="legend-dot-label">
+                  <span class="legend-dot" style="background:#CBD5E1;"></span>
+                  <span class="legend-name">Unknown</span>
+                </div>
+                <div class="legend-count-pct">
+                  <span class="legend-count">59</span>
+                  <span class="legend-pct">4.7%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /two-col -->
+
+      <!-- ── Row 4: Vendor Concentration ── -->
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Vendor Concentration</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="section-badge">Publishers with 3+ apps</span>
+            <span class="table-toggle">Show table ↓</span>
+          </div>
+        </div>
+        <div class="card-divider"></div>
+
+        <div style="display:flex; flex-direction:column;">
+
+          <div class="vendor-row">
+            <span class="vendor-rank">#1</span>
+            <span class="vendor-name">Microsoft Corporation</span>
+            <div class="vendor-apps">
+              <span class="vendor-app-pill">Microsoft 365</span>
+              <span class="vendor-app-pill">Azure AD</span>
+              <span class="vendor-app-pill">Teams</span>
+              <span class="vendor-app-pill">SharePoint</span>
+              <span class="vendor-app-pill" style="color:var(--accent); border-color:rgba(0,168,204,0.3);">+8 more</span>
+            </div>
+            <span class="vendor-count-badge">12 apps</span>
+          </div>
+
+          <div class="vendor-row">
+            <span class="vendor-rank">#2</span>
+            <span class="vendor-name">Epic Systems</span>
+            <div class="vendor-apps">
+              <span class="vendor-app-pill">Epic EHR</span>
+              <span class="vendor-app-pill">MyChart</span>
+              <span class="vendor-app-pill">Epic Bridges</span>
+              <span class="vendor-app-pill" style="color:var(--accent); border-color:rgba(0,168,204,0.3);">+5 more</span>
+            </div>
+            <span class="vendor-count-badge">8 apps</span>
+          </div>
+
+          <div class="vendor-row">
+            <span class="vendor-rank">#3</span>
+            <span class="vendor-name">Philips Healthcare</span>
+            <div class="vendor-apps">
+              <span class="vendor-app-pill">IntelliSpace</span>
+              <span class="vendor-app-pill">PACS Viewer</span>
+              <span class="vendor-app-pill">Cardiovascular</span>
+              <span class="vendor-app-pill" style="color:var(--accent); border-color:rgba(0,168,204,0.3);">+3 more</span>
+            </div>
+            <span class="vendor-count-badge">6 apps</span>
+          </div>
+
+          <div class="vendor-row">
+            <span class="vendor-rank">#4</span>
+            <span class="vendor-name">3M Health Information Systems</span>
+            <div class="vendor-apps">
+              <span class="vendor-app-pill">3M-CAC</span>
+              <span class="vendor-app-pill">360 Encompass</span>
+              <span class="vendor-app-pill">Coding Analytics</span>
+            </div>
+            <span class="vendor-count-badge">3 apps</span>
+          </div>
+
+          <div class="vendor-row">
+            <span class="vendor-rank">#5</span>
+            <span class="vendor-name">Cerner Corporation</span>
+            <div class="vendor-apps">
+              <span class="vendor-app-pill">PowerChart</span>
+              <span class="vendor-app-pill">FirstNet</span>
+              <span class="vendor-app-pill">PharmNet</span>
+            </div>
+            <span class="vendor-count-badge">3 apps</span>
+          </div>
+
+        </div>
+      </div><!-- /vendor concentration -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+</body>
+</html>

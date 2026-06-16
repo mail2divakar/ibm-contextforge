@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>Redundancy Explorer — Glass Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F8FAFC;
+    color: #1D3269;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────────────────── */
+  .sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #1D3269 0%, #162650 100%);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+  }
+
+  .sidebar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,168,204,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-logo .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #00A8CC, #0088a8);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .logo-text span {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+  }
+
+  .sidebar-section-label {
+    padding: 20px 24px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 24px;
+    cursor: pointer;
+    border-radius: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.62);
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.9);
+  }
+
+  .nav-item.active {
+    background: rgba(0,168,204,0.18);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background: #00A8CC;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: rgba(0,168,204,0.25);
+    color: #00A8CC;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .nav-item.active .nav-badge {
+    background: rgba(0,168,204,0.35);
+    color: #5de3f5;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00A8CC, #1D3269);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .sidebar-footer-info { flex: 1; min-width: 0; }
+  .sidebar-footer-info .name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-footer-info .role { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+  /* ── MAIN ─────────────────────────────────────────────── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Top bar */
+  .topbar {
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .topbar-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #94A3B8;
+  }
+
+  .topbar-breadcrumb span { font-weight: 500; }
+  .topbar-breadcrumb .sep { opacity: 0.5; }
+  .topbar-breadcrumb .current { color: #1D3269; font-weight: 600; }
+
+  .topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #94A3B8;
+    width: 220px;
+  }
+
+  .topbar-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    color: #64748B;
+  }
+
+  /* Content */
+  .content {
+    padding: 32px;
+    flex: 1;
+  }
+
+  /* Page header */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .page-title-block h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1D3269;
+    line-height: 1.25;
+    margin-bottom: 6px;
+  }
+
+  .page-title-block p {
+    font-size: 14px;
+    color: #64748B;
+    font-weight: 400;
+  }
+
+  .page-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .btn-export {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #00A8CC;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 12px rgba(0,168,204,0.22);
+    white-space: nowrap;
+  }
+
+  .badge-clusters {
+    background: #F59E0B;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748B;
+    white-space: nowrap;
+  }
+
+  .filter-select {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1D3269;
+    background: #F8FAFC;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .filter-select .chevron { font-size: 10px; color: #94A3B8; }
+
+  .filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1D3269;
+    cursor: pointer;
+  }
+
+  .filter-checkbox input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: #00A8CC;
+    cursor: pointer;
+  }
+
+  .filter-divider {
+    width: 1px;
+    height: 20px;
+    background: #E2E8F0;
+  }
+
+  /* Cluster cards */
+  .clusters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .cluster-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(29,50,105,0.06);
+    overflow: hidden;
+  }
+
+  .cluster-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+  }
+
+  .cluster-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(29,50,105,0.08), rgba(0,168,204,0.08));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .cluster-title-group { flex: 1; min-width: 0; }
+
+  .cluster-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1D3269;
+    margin-bottom: 3px;
+  }
+
+  .cluster-subtitle {
+    font-size: 12px;
+    color: #94A3B8;
+  }
+
+  .cluster-pill {
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .cluster-chevron {
+    font-size: 14px;
+    color: #94A3B8;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    width: 20px;
+    text-align: center;
+  }
+
+  .cluster-chevron.open { transform: rotate(180deg); }
+
+  /* Expanded body */
+  .cluster-body {
+    border-top: 1px solid #F1F5F9;
+    padding: 0 20px 16px;
+  }
+
+  .app-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+
+  .app-table thead tr th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #94A3B8;
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid #F1F5F9;
+  }
+
+  .app-table tbody tr td {
+    padding: 10px 10px;
+    font-size: 13px;
+    color: #1D3269;
+    border-bottom: 1px solid #F8FAFC;
+    vertical-align: middle;
+  }
+
+  .app-table tbody tr:last-child td { border-bottom: none; }
+
+  .app-table tbody tr:hover td { background: #F8FAFC; }
+
+  .td-name { font-weight: 500; }
+
+  .td-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,168,204,0.08);
+    color: #0088a8;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .td-managed-no {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #EF4444;
+    font-weight: 500;
+  }
+
+  .td-managed-yes {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #10B981;
+    font-weight: 500;
+  }
+
+  .more-link {
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 13px;
+    color: #00A8CC;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .more-link:hover { text-decoration: underline; }
+
+  .cluster-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 10px 0;
+    border-top: 1px solid #F1F5F9;
+    margin-top: 10px;
+  }
+
+  .action-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #00A8CC;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+  }
+
+  .action-link:hover { text-decoration: underline; }
+
+  .action-link.secondary { color: #64748B; font-weight: 500; }
+
+  .action-sep { font-size: 13px; color: #CBD5E1; }
+
+  /* Collapsed preview */
+  .cluster-collapsed-info {
+    padding: 0 20px 16px;
+    border-top: 1px solid #F1F5F9;
+    padding-top: 12px;
+    font-size: 13px;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .collapsed-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    flex-shrink: 0;
+  }
+
+  /* Hint row */
+  .hint-row {
+    margin-top: 20px;
+    padding: 14px 20px;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #92400E;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hint-row .hint-icon { font-size: 16px; flex-shrink: 0; }
+
+  /* Rationalization indicator */
+  .risk-high {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #FEE2E2;
+    color: #B91C1C;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .risk-medium {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  /* Summary stats */
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 1px 6px rgba(29,50,105,0.04);
+  }
+
+  .stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .stat-icon.blue  { background: rgba(29,50,105,0.08); }
+  .stat-icon.teal  { background: rgba(0,168,204,0.10); }
+  .stat-icon.amber { background: rgba(245,158,11,0.10); }
+  .stat-icon.red   { background: rgba(239,68,68,0.08); }
+
+  .stat-label { font-size: 12px; color: #94A3B8; font-weight: 500; margin-bottom: 2px; }
+  .stat-value { font-size: 22px; font-weight: 800; color: #1D3269; line-height: 1; }
+  .stat-sub   { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">GP</div>
+      <div class="logo-text">Glass Platform<span>Application Intelligence</span></div>
+    </div>
+  </div>
+
+  <div class="sidebar-section-label">Overview</div>
+  <a class="nav-item" href="#"><span class="nav-icon">🏠</span> Dashboard</a>
+  <a class="nav-item" href="#"><span class="nav-icon">📦</span> All Applications <span class="nav-badge">370</span></a>
+
+  <div class="sidebar-section-label">Analysis</div>
+  <a class="nav-item" href="#"><span class="nav-icon">📊</span> Business Alignment</a>
+  <a class="nav-item active" href="#"><span class="nav-icon">🔗</span> Redundancy Explorer <span class="nav-badge">5</span></a>
+  <a class="nav-item" href="#"><span class="nav-icon">⚠️</span> Risk &amp; Compliance</a>
+  <a class="nav-item" href="#"><span class="nav-icon">📈</span> Lifecycle &amp; EOL</a>
+
+  <div class="sidebar-section-label">Governance</div>
+  <a class="nav-item" href="#"><span class="nav-icon">🗂️</span> Data Quality</a>
+  <a class="nav-item" href="#"><span class="nav-icon">🔑</span> Ownership Registry</a>
+  <a class="nav-item" href="#"><span class="nav-icon">💰</span> Cost Attribution</a>
+
+  <div class="sidebar-section-label">Configure</div>
+  <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
+  <a class="nav-item" href="#"><span class="nav-icon">📥</span> Data Import</a>
+
+  <div class="sidebar-footer">
+    <div class="avatar">UV</div>
+    <div class="sidebar-footer-info">
+      <div class="name">Uday Valapudasu</div>
+      <div class="role">Architect · KSquare Group</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-breadcrumb">
+      <span>Analysis</span>
+      <span class="sep">›</span>
+      <span class="current">Redundancy Explorer</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">🔍 &nbsp;Search applications…</div>
+      <div class="topbar-icon-btn">🔔</div>
+      <div class="topbar-icon-btn">❓</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title-block">
+        <h1>Redundancy Explorer</h1>
+        <p>Applications sharing the same business process — rationalization candidates.</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn-export">⬇ Export CSV</button>
+        <span class="badge-clusters">5 clusters found</span>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon blue">🔗</div>
+        <div>
+          <div class="stat-label">Redundancy Clusters</div>
+          <div class="stat-value">5</div>
+          <div class="stat-sub">business process groups</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">📦</div>
+        <div>
+          <div class="stat-label">Overlapping Applications</div>
+          <div class="stat-value">370</div>
+          <div class="stat-sub">across all clusters</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red">⚠️</div>
+        <div>
+          <div class="stat-label">High-Risk Redundancy</div>
+          <div class="stat-value">2</div>
+          <div class="stat-sub">clusters ≥ 60 apps</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon teal">🚫</div>
+        <div>
+          <div class="stat-label">Excluded (NULL Process)</div>
+          <div class="stat-value">43</div>
+          <div class="stat-sub">records omitted</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter by:</span>
+      <div class="filter-select">All Business Processes <span class="chevron">▾</span></div>
+      <div class="filter-divider"></div>
+      <div class="filter-select">All App Types <span class="chevron">▾</span></div>
+      <div class="filter-divider"></div>
+      <label class="filter-checkbox">
+        <input type="checkbox" /> Baptist Managed only
+      </label>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:12px; color:#94A3B8;">Sort by:</span>
+        <div class="filter-select" style="background:#fff;">App Count ↓ <span class="chevron">▾</span></div>
+      </div>
+    </div>
+
+    <!-- Clusters list -->
+    <div class="clusters-list">
+
+      <!-- ── CLUSTER 1 — Imaging (expanded) ── -->
+      <div class="cluster-card">
+        <div class="cluster-header">
+          <div class="cluster-icon">🖼️</div>
+          <div class="cluster-title-group">
+            <div class="cluster-title">Imaging</div>
+            <div class="cluster-subtitle">Medical imaging systems and diagnostic visualization platforms</div>
+          </div>
+          <span class="risk-high">🔴 High redundancy</span>
+          <span class="cluster-pill">67 apps</span>
+          <div class="cluster-chevron open">▲</div>
+        </div>
+        <div class="cluster-body">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th style="width:44%">Application Name</th>
+                <th style="width:16%">Type</th>
+                <th style="width:18%">Baptist Managed</th>
+                <th style="width:22%">Rationalization Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-name">3D Slicer image computing platform</td>
+                <td><span class="td-type">COTS</span></td>
+                <td><span class="td-managed-no">✗ No</span></td>
+                <td><span class="risk-high">High</span></td>
+              </tr>
+              <tr>
+                <td class="td-name">3D Scanner</td>
+                <td><span class="td-type">COTS</span></td>
+                <td><span class="td-managed-no">✗ No</span></td>
+                <td><span class="risk-medium">Medium</span></td>
+              </tr>
+              <tr>
+                <td class="td-name">3M Health Data Management</td>
+                <td><span class="td-type">COTS</span></td>
+                <td><span class="td-managed-no">✗ No</span></td>
+                <td><span class="risk-high">High</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <a class="more-link" href="#">+ 64 more applications →</a>
+          <div class="cluster-actions">
+            <a class="action-link" href="#">📋 View all 67 apps</a>
+            <span class="action-sep">·</span>
+            <a class="action-link secondary" href="#">⬇ Export cluster</a>
+            <span class="action-sep">·</span>
+            <a class="action-link secondary" href="#">🗺 Dependency map</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CLUSTER 2 — Health Information Management (expanded) ── -->
+      <div class="cluster-card">
+        <div class="cluster-header">
+          <div class="cluster-icon">🏥</div>
+          <div class="cluster-title-group">
+            <div class="cluster-title">Health Information Management</div>
+            <div class="cluster-subtitle">Clinical documentation, coding, and records management systems</div>
+          </div>
+          <span class="risk-medium">🟡 Medium redundancy</span>
+          <span class="cluster-pill">5 apps</span>
+          <div class="cluster-chevron open">▲</div>
+        </div>
+        <div class="cluster-body">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th style="width:44%">Application Name</th>
+                <th style="width:16%">Type</th>
+                <th style="width:18%">Baptist Managed</th>
+                <th style="width:22%">Rationalization Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-name">3M Coding &amp; Reimbursement</td>
+                <td><span class="td-type">COTS</span></td>
+                <td><span class="td-managed-yes">✓ Yes</span></td>
+                <td><span class="risk-medium">Medium</span></td>
+              </tr>
+              <tr>
+                <td class="td-name">Dolbey Fusion Narrate</td>
+                <td><span class="td-type">COTS</span></td>
+                <td><span class="td-managed-yes">✓ Yes</span></td>
+                <td><span class="risk-medium">Medium</span></td>
+              </tr>
+              <tr>
+                <td class="td-name">MedQuist / MModal Transcription</td>
+                <td><span class="td-type">COTS</span></td>
+                <td><span class="td-managed-no">✗ No</span></td>
+                <td><span class="risk-high">High</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <a class="more-link" href="#">+ 2 more applications →</a>
+          <div class="cluster-actions">
+            <a class="action-link" href="#">📋 View all 5 apps</a>
+            <span class="action-sep">·</span>
+            <a class="action-link secondary" href="#">⬇ Export cluster</a>
+            <span class="action-sep">·</span>
+            <a class="action-link secondary" href="#">🗺 Dependency map</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CLUSTER 3 — Radiation Oncology (collapsed) ── -->
+      <div class="cluster-card">
+        <div class="cluster-header">
+          <div class="cluster-icon">☢️</div>
+          <div class="cluster-title-group">
+            <div class="cluster-title">Radiation Oncology</div>
+            <div class="cluster-subtitle">Treatment planning, dosimetry, and oncology workflow systems</div>
+          </div>
+          <span class="risk-high">🔴 High redundancy</span>
+          <span class="cluster-pill">88 apps</span>
+          <div class="cluster-chevron">▼</div>
+        </div>
+        <div class="cluster-collapsed-info">
+          <div class="collapsed-dot"></div>
+          Click to expand and view all 88 overlapping applications in this cluster
+        </div>
+      </div>
+
+      <!-- ── CLUSTER 4 — Technology and Digital (collapsed) ── -->
+      <div class="cluster-card">
+        <div class="cluster-header">
+          <div class="cluster-icon">💻</div>
+          <div class="cluster-title-group">
+            <div class="cluster-title">Technology and Digital</div>
+            <div class="cluster-subtitle">IT operations, infrastructure, and digital transformation platforms</div>
+          </div>
+          <span class="risk-high">🔴 High redundancy</span>
+          <span class="cluster-pill">161 apps</span>
+          <div class="cluster-chevron">▼</div>
+        </div>
+        <div class="cluster-collapsed-info">
+          <div class="collapsed-dot"></div>
+          Click to expand and view all 161 overlapping applications in this cluster
+        </div>
+      </div>
+
+      <!-- ── CLUSTER 5 — Laboratory (collapsed) ── -->
+      <div class="cluster-card">
+        <div class="cluster-header">
+          <div class="cluster-icon">🧪</div>
+          <div class="cluster-title-group">
+            <div class="cluster-title">Laboratory</div>
+            <div class="cluster-subtitle">LIS, specimen management, and diagnostic testing platforms</div>
+          </div>
+          <span class="risk-medium">🟡 Medium redundancy</span>
+          <span class="cluster-pill">49 apps</span>
+          <div class="cluster-chevron">▼</div>
+        </div>
+        <div class="cluster-collapsed-info">
+          <div class="collapsed-dot"></div>
+          Click to expand and view all 49 overlapping applications in this cluster
+        </div>
+      </div>
+
+    </div><!-- /clusters-list -->
+
+    <!-- Hint row -->
+    <div class="hint-row">
+      <span class="hint-icon">ℹ️</span>
+      Showing top redundancy clusters. Applications with NULL business process are excluded (43 records). To include them, update the business process field in the data import.
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+</body>
+</html>

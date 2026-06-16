@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:\\\\Users\\\\UdayValapudasu\\\\OneDrive - The Ksquare Group\\\\Desktop\\\\Spec KIT GraphRAG\\\\specs\\\\knowledge-graph-ingestion\\\\checklists\")",
+      "PowerShell(& \"c:\\\\Users\\\\UdayValapudasu\\\\OneDrive - The Ksquare Group\\\\Desktop\\\\Spec KIT GraphRAG\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks 2>&1)",
+      "PowerShell(py --version; if \\($?\\) { \"py command works\" }; python3 --version 2>$null; \\(Get-Command python -ErrorAction SilentlyContinue\\).Source; \\(Get-Command py -ErrorAction SilentlyContinue\\).Source; \\(Get-Command python3 -ErrorAction SilentlyContinue\\).Source)",
+      "PowerShell(cd \"C:\\\\Users\\\\UdayValapudasu\\\\OneDrive - The Ksquare Group\\\\Desktop\\\\Spec KIT GraphRAG\\\\frontend\"; if \\(-not \\(Test-Path \"node_modules\"\\)\\) { npm install } else { \"node_modules already present\" }; Start-Process -FilePath \"npm\" -ArgumentList \"run\", \"dev\" -NoNewWindow; Start-Sleep -Seconds 4; Invoke-WebRequest -Uri \"http://localhost:5173\" -UseBasicParsing -TimeoutSec 5 | Select-Object -ExpandProperty StatusCode)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\UdayValapudasu\\OneDrive - The Ksquare Group\\Desktop\\Spec KIT GraphRAG\\specs\\knowledge-graph-ingestion"
+    ]
+  }
+}

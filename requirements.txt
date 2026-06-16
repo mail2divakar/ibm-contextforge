@@ -1,0 +1,25 @@
+# Web framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# Data processing (ETL)
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Graph analytics
+networkx>=3.0
+
+# Vector store (local SQLite-backed; Epic 3)
+chromadb>=0.4.0
+
+# Google Cloud / Vertex AI (embeddings: Epic 3; agent: Epic 4)
+google-cloud-aiplatform>=1.38.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+httpx>=0.27.0
+
+# Dev utilities
+python-dotenv>=1.0.0

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KSquare Group — IT Application Knowledge Graph: Color Palette Variations</title>
+<style>
+/* =====================================================================
+   GLOBAL RESET & BASE
+   ===================================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #F4F6FB;
+  color: #1A1A2E;
+  padding: 32px 24px;
+  min-width: 1100px;
+}
+
+h1.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1D3269;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #64748B;
+  margin-bottom: 40px;
+}
+
+/* Variation wrapper */
+.variation {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 56px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* Variation header */
+.var-header {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid #F0F4F8;
+}
+
+.var-number {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 4px;
+}
+
+.var-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1D3269;
+  margin-bottom: 4px;
+}
+
+.var-register {
+  font-size: 13px;
+  color: #64748B;
+  font-style: italic;
+}
+
+/* Token chips section */
+.tokens-section {
+  padding: 16px 28px;
+  background: #FAFBFD;
+  border-bottom: 1px solid #F0F4F8;
+}
+
+.tokens-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 10px;
+}
+
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #FFFFFF;
+  font-size: 11px;
+  font-weight: 500;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.chip-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+
+.chip-hex {
+  color: #94A3B8;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Mini UI preview */
+.preview-section {
+  padding: 24px 28px;
+}
+
+.preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 14px;
+}
+
+.mini-ui {
+  display: flex;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Sidebar shared glassmorphism base — color applied per variation */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  position: relative;
+  /* Glassmorphism override per variation */
+  background: rgba(29, 50, 105, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 16px;
+}
+
+.sidebar-logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #1D3269;
+}
+
+.sidebar-logo-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.95);
+  line-height: 1.2;
+}
+
+.sidebar-logo-sub {
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+}
+
+.sidebar-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  padding: 0 18px;
+  margin-bottom: 4px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.15s;
+}
+
+.sidebar-item.active {
+  color: #FFFFFF;
+  background: rgba(255,255,255,0.12);
+  border-left: 3px solid;
+  padding-left: 15px;
+}
+
+.sidebar-item .icon {
+  width: 16px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.sidebar-badge {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  color: #1D3269;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  background: #FFFFFF;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  padding: 12px 20px;
+  border-bottom: 1px solid #F0F4F8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+}
+
+.top-bar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A2E;
+}
+
+.top-bar-meta {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1D3269;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Stats row */
+.stats-row {
+  display: flex;
+  gap: 10px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #F0F4F8;
+  background: #FAFBFD;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1D3269;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 9px;
+  color: #94A3B8;
+  margin-top: 3px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.stat-delta {
+  font-size: 9px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Main card */
+.main-card {
+  border-radius: 10px;
+  border: 1px solid #F0F4F8;
+  overflow: hidden;
+  flex: 1;
+}
+
+.card-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid #F0F4F8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAFBFD;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1A1A2E;
+}
+
+.card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* NL query bar */
+.nl-query-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 7px;
+  border: 1px solid;
+  font-size: 11px;
+  background: #FAFBFD;
+}
+
+.nl-icon {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.nl-text {
+  color: #64748B;
+  flex: 1;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  color: #FFFFFF;
+}
+
+.btn-outline {
+  background: transparent;
+  font-size: 10px;
+}
+
+/* App list rows */
+.app-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid #F9FAFB;
+  font-size: 11px;
+}
+
+.app-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.app-name {
+  color: #334155;
+  font-weight: 500;
+  flex: 1;
+}
+
+.app-dept {
+  color: #94A3B8;
+  font-size: 10px;
+}
+
+.tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* =====================================================================
+   VARIATION 1: NAVY + GOLD
+   Primary: #1D3269  Accent: #C9952A  Surface: #FDF9F0
+   Border: #E8D9B0   Text: #1A1A2E    Muted: #7A6A50
+   Success: #2D7A4A  Warning: #C9952A  Error: #C0392B
+   ===================================================================== */
+.v1 .sidebar-item.active { border-left-color: #C9952A; }
+.v1 .sidebar-logo-mark { background: #C9952A; }
+.v1 .sidebar-badge { background: rgba(201,149,42,0.2); color: #C9952A; }
+.v1 .stat-value { color: #1D3269; }
+.v1 .nl-query-bar { border-color: #E8D9B0; }
+.v1 .btn-primary { background: #C9952A; }
+.v1 .btn-outline { border: 1px solid #C9952A; color: #C9952A; }
+.v1 .app-dot { background: #2D7A4A; }
+.v1 .app-dot.warn { background: #C9952A; }
+.v1 .app-dot.err { background: #C0392B; }
+.v1 .tag.success { background: rgba(45,122,74,0.1); color: #2D7A4A; }
+.v1 .tag.warning { background: rgba(201,149,42,0.12); color: #A07820; }
+.v1 .tag.error { background: rgba(192,57,43,0.1); color: #C0392B; }
+.v1 .card-header { background: #FDF9F0; border-color: #E8D9B0; }
+.v1 .stat-card { background: #FDF9F0; border-color: #E8D9B0; }
+.v1 .top-bar { border-color: #E8D9B0; }
+.v1 .nl-search-accent { color: #C9952A; }
+
+/* =====================================================================
+   VARIATION 2: NAVY + TEAL
+   Primary: #1D3269  Accent: #00A8CC  Surface: #F0FAFD
+   Border: #B8E8F0   Text: #1A1A2E    Muted: #5A8A95
+   Success: #0F9060  Warning: #E8A020  Error: #D93B3B
+   ===================================================================== */
+.v2 .sidebar-item.active { border-left-color: #00A8CC; }
+.v2 .sidebar-logo-mark { background: #00A8CC; }
+.v2 .sidebar-badge { background: rgba(0,168,204,0.15); color: #00A8CC; }
+.v2 .nl-query-bar { border-color: #B8E8F0; }
+.v2 .btn-primary { background: #00A8CC; }
+.v2 .btn-outline { border: 1px solid #00A8CC; color: #00A8CC; }
+.v2 .app-dot { background: #0F9060; }
+.v2 .app-dot.warn { background: #E8A020; }
+.v2 .app-dot.err { background: #D93B3B; }
+.v2 .tag.success { background: rgba(15,144,96,0.1); color: #0F9060; }
+.v2 .tag.warning { background: rgba(232,160,32,0.12); color: #A07010; }
+.v2 .tag.error { background: rgba(217,59,59,0.1); color: #D93B3B; }
+.v2 .card-header { background: #F0FAFD; border-color: #B8E8F0; }
+.v2 .stat-card { background: #F0FAFD; border-color: #B8E8F0; }
+.v2 .top-bar { border-color: #B8E8F0; }
+
+/* =====================================================================
+   VARIATION 3: NAVY + ELECTRIC BLUE
+   Primary: #1D3269  Accent: #4A90E2  Surface: #F0F5FD
+   Border: #C0D8F5   Text: #1A1A2E    Muted: #5A78A8
+   Success: #1A8C5A  Warning: #E07820  Error: #D63030
+   ===================================================================== */
+.v3 .sidebar-item.active { border-left-color: #4A90E2; }
+.v3 .sidebar-logo-mark { background: #4A90E2; }
+.v3 .sidebar-badge { background: rgba(74,144,226,0.15); color: #4A90E2; }
+.v3 .nl-query-bar { border-color: #C0D8F5; }
+.v3 .btn-primary { background: #4A90E2; }
+.v3 .btn-outline { border: 1px solid #4A90E2; color: #4A90E2; }
+.v3 .app-dot { background: #1A8C5A; }
+.v3 .app-dot.warn { background: #E07820; }
+.v3 .app-dot.err { background: #D63030; }
+.v3 .tag.success { background: rgba(26,140,90,0.1); color: #1A8C5A; }
+.v3 .tag.warning { background: rgba(224,120,32,0.12); color: #A05A10; }
+.v3 .tag.error { background: rgba(214,48,48,0.1); color: #D63030; }
+.v3 .card-header { background: #F0F5FD; border-color: #C0D8F5; }
+.v3 .stat-card { background: #F0F5FD; border-color: #C0D8F5; }
+.v3 .top-bar { border-color: #C0D8F5; }
+
+/* =====================================================================
+   VARIATION 4: NAVY + EMERALD
+   Primary: #1D3269  Accent: #10B981  Surface: #F0FDF8
+   Border: #A7F3D0   Text: #1A1A2E    Muted: #3D7A60
+   Success: #10B981  Warning: #F59E0B  Error: #EF4444
+   ===================================================================== */
+.v4 .sidebar-item.active { border-left-color: #10B981; }
+.v4 .sidebar-logo-mark { background: #10B981; }
+.v4 .sidebar-badge { background: rgba(16,185,129,0.15); color: #10B981; }
+.v4 .nl-query-bar { border-color: #A7F3D0; }
+.v4 .btn-primary { background: #10B981; }
+.v4 .btn-outline { border: 1px solid #10B981; color: #10B981; }
+.v4 .app-dot { background: #10B981; }
+.v4 .app-dot.warn { background: #F59E0B; }
+.v4 .app-dot.err { background: #EF4444; }
+.v4 .tag.success { background: rgba(16,185,129,0.1); color: #059669; }
+.v4 .tag.warning { background: rgba(245,158,11,0.12); color: #B45309; }
+.v4 .tag.error { background: rgba(239,68,68,0.1); color: #DC2626; }
+.v4 .card-header { background: #F0FDF8; border-color: #A7F3D0; }
+.v4 .stat-card { background: #F0FDF8; border-color: #A7F3D0; }
+.v4 .top-bar { border-color: #A7F3D0; }
+
+/* =====================================================================
+   VARIATION 5: NAVY + CORAL
+   Primary: #1D3269  Accent: #FF6B4A  Surface: #FFF5F2
+   Border: #FFD0C5   Text: #1A1A2E    Muted: #A06050
+   Success: #2A8C55  Warning: #E09010  Error: #FF6B4A
+   ===================================================================== */
+.v5 .sidebar-item.active { border-left-color: #FF6B4A; }
+.v5 .sidebar-logo-mark { background: #FF6B4A; }
+.v5 .sidebar-badge { background: rgba(255,107,74,0.15); color: #FF6B4A; }
+.v5 .nl-query-bar { border-color: #FFD0C5; }
+.v5 .btn-primary { background: #FF6B4A; }
+.v5 .btn-outline { border: 1px solid #FF6B4A; color: #FF6B4A; }
+.v5 .app-dot { background: #2A8C55; }
+.v5 .app-dot.warn { background: #E09010; }
+.v5 .app-dot.err { background: #FF6B4A; }
+.v5 .tag.success { background: rgba(42,140,85,0.1); color: #2A8C55; }
+.v5 .tag.warning { background: rgba(224,144,16,0.12); color: #9A6408; }
+.v5 .tag.error { background: rgba(255,107,74,0.12); color: #D94020; }
+.v5 .card-header { background: #FFF5F2; border-color: #FFD0C5; }
+.v5 .stat-card { background: #FFF5F2; border-color: #FFD0C5; }
+.v5 .top-bar { border-color: #FFD0C5; }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">KSquare IT Application Knowledge Graph — Color Palette Variations</h1>
+<p class="page-subtitle">Baptist Health · 1,250 Applications · Redundancy Analysis Platform · 5 Accent Families · June 2026</p>
+
+<!-- ===================================================================
+     VARIATION 1: NAVY + GOLD
+     =================================================================== -->
+<div class="variation v1">
+  <div class="var-header">
+    <div class="var-number">Variation 01</div>
+    <div class="var-name">Navy + Gold</div>
+    <div class="var-register">Prestigious consulting authority — communicates institutional trust, premium delivery, and board-level credibility.</div>
+  </div>
+
+  <div class="tokens-section">
+    <div class="tokens-label">Design Tokens</div>
+    <div class="chips-row">
+      <div class="chip"><div class="chip-swatch" style="background:#1D3269;"></div>Primary<span class="chip-hex">#1D3269</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#C9952A;"></div>Accent<span class="chip-hex">#C9952A</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#FDF9F0;border:1px solid #ccc;"></div>Surface<span class="chip-hex">#FDF9F0</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#E8D9B0;"></div>Border<span class="chip-hex">#E8D9B0</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#1A1A2E;"></div>Text<span class="chip-hex">#1A1A2E</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#7A6A50;"></div>Muted<span class="chip-hex">#7A6A50</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#2D7A4A;"></div>Success<span class="chip-hex">#2D7A4A</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#C9952A;"></div>Warning<span class="chip-hex">#C9952A</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#C0392B;"></div>Error<span class="chip-hex">#C0392B</span></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-label">UI Preview — Redundancy Analysis Dashboard</div>
+    <div class="mini-ui">
+      <!-- Sidebar -->
+      <div class="sidebar" style="background:rgba(29,50,105,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,0.12);box-shadow:4px 0 24px rgba(29,50,105,0.18);">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-mark" style="background:#C9952A;color:#1D3269;">KS</div>
+          <div>
+            <div class="sidebar-logo-text">KSquare Group</div>
+            <div class="sidebar-logo-sub">App Knowledge Graph</div>
+          </div>
+        </div>
+        <div class="sidebar-section-label">Analytics</div>
+        <div class="sidebar-item active" style="border-left-color:#C9952A;">
+          <span class="icon">⬡</span> Redundancy Analysis
+          <span class="sidebar-badge" style="background:rgba(201,149,42,0.2);color:#C9952A;">47</span>
+        </div>
+        <div class="sidebar-item"><span class="icon">◈</span> Application Map</div>
+        <div class="sidebar-item"><span class="icon">◎</span> NL Query</div>
+        <div class="sidebar-section-label" style="margin-top:10px;">Governance</div>
+        <div class="sidebar-item"><span class="icon">▦</span> Baptist Health Portfolio</div>
+        <div class="sidebar-item"><span class="icon">◇</span> Integrations</div>
+        <div class="sidebar-item"><span class="icon">⊙</span> Reports</div>
+      </div>
+      <!-- Main -->
+      <div class="main-content">
+        <div class="top-bar" style="border-color:#E8D9B0;">
+          <div>
+            <div class="top-bar-title">Redundancy Analysis</div>
+            <div class="top-bar-meta">Baptist Health · 1,250 applications scanned</div>
+          </div>
+          <div class="top-bar-right">
+            <button class="btn btn-outline" style="border:1px solid #C9952A;color:#C9952A;">Export</button>
+            <button class="btn btn-primary" style="background:#C9952A;">+ New Analysis</button>
+            <div class="avatar">UV</div>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="stats-row">
+            <div class="stat-card" style="background:#FDF9F0;border-color:#E8D9B0;">
+              <div class="stat-value" style="color:#1D3269;">1,250</div>
+              <div class="stat-label">Total Applications</div>
+              <div class="stat-delta" style="color:#2D7A4A;">▲ 42 added Q2</div>
+            </div>
+            <div class="stat-card" style="background:#FDF9F0;border-color:#E8D9B0;">
+              <div class="stat-value" style="color:#C9952A;">47</div>
+              <div class="stat-label">Redundant Pairs</div>
+              <div class="stat-delta" style="color:#C0392B;">▲ 8 new flagged</div>
+            </div>
+            <div class="stat-card" style="background:#FDF9F0;border-color:#E8D9B0;">
+              <div class="stat-value" style="color:#1D3269;">$2.4M</div>
+              <div class="stat-label">Est. Savings Potential</div>
+              <div class="stat-delta" style="color:#2D7A4A;">▲ 18% YoY</div>
+            </div>
+            <div class="stat-card" style="background:#FDF9F0;border-color:#E8D9B0;">
+              <div class="stat-value" style="color:#1D3269;">94%</div>
+              <div class="stat-label">Graph Coverage</div>
+              <div class="stat-delta" style="color:#7A6A50;">— stable</div>
+            </div>
+          </div>
+          <div class="main-card" style="border-color:#E8D9B0;">
+            <div class="card-header" style="background:#FDF9F0;border-color:#E8D9B0;">
+              <div class="card-title">🔍 Natural Language Query — Application Intelligence</div>
+              <button class="btn btn-primary" style="background:#C9952A;font-size:10px;padding:5px 10px;">Run Query</button>
+            </div>
+            <div class="card-body">
+              <div class="nl-query-bar" style="border-color:#E8D9B0;">
+                <span class="nl-icon">✦</span>
+                <span class="nl-text">"Show me all EHR systems in Baptist Health that overlap with Epic and have fewer than 100 active users"</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot warn" style="background:#C9952A;"></div>
+                <div class="app-name">Meditech Expanse</div>
+                <div class="app-dept">Clinical — Cardiology</div>
+                <span class="tag warning" style="background:rgba(201,149,42,0.12);color:#A07820;">72 users</span>
+                <span class="tag error" style="background:rgba(192,57,43,0.1);color:#C0392B;">Redundant</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot" style="background:#2D7A4A;"></div>
+                <div class="app-name">Epic MyChart (Primary)</div>
+                <div class="app-dept">Clinical — Enterprise</div>
+                <span class="tag success" style="background:rgba(45,122,74,0.1);color:#2D7A4A;">4,200 users</span>
+                <span class="tag success" style="background:rgba(45,122,74,0.1);color:#2D7A4A;">Canonical</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot err" style="background:#C0392B;"></div>
+                <div class="app-name">Allscripts Sunrise</div>
+                <div class="app-dept">Clinical — Legacy ED</div>
+                <span class="tag error" style="background:rgba(192,57,43,0.1);color:#C0392B;">38 users</span>
+                <span class="tag error" style="background:rgba(192,57,43,0.1);color:#C0392B;">Retire</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================
+     VARIATION 2: NAVY + TEAL
+     =================================================================== -->
+<div class="variation v2">
+  <div class="var-header">
+    <div class="var-number">Variation 02</div>
+    <div class="var-name">Navy + Teal</div>
+    <div class="var-register">Modern tech platform confidence — signals innovation, health-tech fluency, and forward-looking digital transformation.</div>
+  </div>
+
+  <div class="tokens-section">
+    <div class="tokens-label">Design Tokens</div>
+    <div class="chips-row">
+      <div class="chip"><div class="chip-swatch" style="background:#1D3269;"></div>Primary<span class="chip-hex">#1D3269</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#00A8CC;"></div>Accent<span class="chip-hex">#00A8CC</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#F0FAFD;border:1px solid #ccc;"></div>Surface<span class="chip-hex">#F0FAFD</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#B8E8F0;"></div>Border<span class="chip-hex">#B8E8F0</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#1A1A2E;"></div>Text<span class="chip-hex">#1A1A2E</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#5A8A95;"></div>Muted<span class="chip-hex">#5A8A95</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#0F9060;"></div>Success<span class="chip-hex">#0F9060</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#E8A020;"></div>Warning<span class="chip-hex">#E8A020</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#D93B3B;"></div>Error<span class="chip-hex">#D93B3B</span></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-label">UI Preview — Application Map Explorer</div>
+    <div class="mini-ui">
+      <div class="sidebar" style="background:rgba(29,50,105,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,0.12);box-shadow:4px 0 24px rgba(29,50,105,0.18);">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-mark" style="background:#00A8CC;color:#FFFFFF;font-size:11px;">KS</div>
+          <div>
+            <div class="sidebar-logo-text">KSquare Group</div>
+            <div class="sidebar-logo-sub">App Knowledge Graph</div>
+          </div>
+        </div>
+        <div class="sidebar-section-label">Analytics</div>
+        <div class="sidebar-item"><span class="icon">⬡</span> Redundancy Analysis</div>
+        <div class="sidebar-item active" style="border-left-color:#00A8CC;">
+          <span class="icon">◈</span> Application Map
+          <span class="sidebar-badge" style="background:rgba(0,168,204,0.2);color:#00A8CC;">1,250</span>
+        </div>
+        <div class="sidebar-item"><span class="icon">◎</span> NL Query</div>
+        <div class="sidebar-section-label" style="margin-top:10px;">Governance</div>
+        <div class="sidebar-item"><span class="icon">▦</span> Baptist Health Portfolio</div>
+        <div class="sidebar-item"><span class="icon">◇</span> Integrations</div>
+        <div class="sidebar-item"><span class="icon">⊙</span> Reports</div>
+      </div>
+      <div class="main-content">
+        <div class="top-bar" style="border-color:#B8E8F0;">
+          <div>
+            <div class="top-bar-title">Application Map Explorer</div>
+            <div class="top-bar-meta">Baptist Health · Graph topology view</div>
+          </div>
+          <div class="top-bar-right">
+            <button class="btn btn-outline" style="border:1px solid #00A8CC;color:#00A8CC;">Filter</button>
+            <button class="btn btn-primary" style="background:#00A8CC;">+ Add Node</button>
+            <div class="avatar" style="background:#00A8CC;">UV</div>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="stats-row">
+            <div class="stat-card" style="background:#F0FAFD;border-color:#B8E8F0;">
+              <div class="stat-value" style="color:#1D3269;">1,250</div>
+              <div class="stat-label">Applications</div>
+              <div class="stat-delta" style="color:#0F9060;">▲ 42 this quarter</div>
+            </div>
+            <div class="stat-card" style="background:#F0FAFD;border-color:#B8E8F0;">
+              <div class="stat-value" style="color:#00A8CC;">318</div>
+              <div class="stat-label">Integrations Mapped</div>
+              <div class="stat-delta" style="color:#0F9060;">▲ 24 new</div>
+            </div>
+            <div class="stat-card" style="background:#F0FAFD;border-color:#B8E8F0;">
+              <div class="stat-value" style="color:#1D3269;">12</div>
+              <div class="stat-label">Business Domains</div>
+              <div class="stat-delta" style="color:#5A8A95;">— unchanged</div>
+            </div>
+            <div class="stat-card" style="background:#F0FAFD;border-color:#B8E8F0;">
+              <div class="stat-value" style="color:#D93B3B;">47</div>
+              <div class="stat-label">Flagged Redundancies</div>
+              <div class="stat-delta" style="color:#D93B3B;">▲ 8 new flags</div>
+            </div>
+          </div>
+          <div class="main-card" style="border-color:#B8E8F0;">
+            <div class="card-header" style="background:#F0FAFD;border-color:#B8E8F0;">
+              <div class="card-title">⬡ Application Cluster — Clinical Systems</div>
+              <button class="btn" style="background:#00A8CC;color:#FFF;font-size:10px;padding:5px 10px;">Analyze Cluster</button>
+            </div>
+            <div class="card-body">
+              <div class="nl-query-bar" style="border-color:#B8E8F0;background:#F0FAFD;">
+                <span class="nl-icon">◎</span>
+                <span class="nl-text">"Which clinical apps share patient data flows with Epic but have no documented integration contracts?"</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot" style="background:#0F9060;"></div>
+                <div class="app-name">Epic EHR (Enterprise)</div>
+                <div class="app-dept">Clinical — Core</div>
+                <span class="tag success" style="background:rgba(15,144,96,0.1);color:#0F9060;">Canonical</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot warn" style="background:#E8A020;"></div>
+                <div class="app-name">Cerner PowerChart</div>
+                <div class="app-dept">Clinical — ICU Legacy</div>
+                <span class="tag warning" style="background:rgba(232,160,32,0.12);color:#A07010;">No Contract</span>
+                <span class="tag" style="background:rgba(0,168,204,0.1);color:#00A8CC;">Review</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot err" style="background:#D93B3B;"></div>
+                <div class="app-name">iMDsoft MetaVision</div>
+                <div class="app-dept">Clinical — Critical Care</div>
+                <span class="tag error" style="background:rgba(217,59,59,0.1);color:#D93B3B;">Undocumented</span>
+                <span class="tag error" style="background:rgba(217,59,59,0.1);color:#D93B3B;">High Risk</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================
+     VARIATION 3: NAVY + ELECTRIC BLUE
+     =================================================================== -->
+<div class="variation v3">
+  <div class="var-header">
+    <div class="var-number">Variation 03</div>
+    <div class="var-name">Navy + Electric Blue</div>
+    <div class="var-register">Digital enterprise clarity — familiar, approachable, and deeply aligned with enterprise SaaS conventions that users already trust.</div>
+  </div>
+
+  <div class="tokens-section">
+    <div class="tokens-label">Design Tokens</div>
+    <div class="chips-row">
+      <div class="chip"><div class="chip-swatch" style="background:#1D3269;"></div>Primary<span class="chip-hex">#1D3269</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#4A90E2;"></div>Accent<span class="chip-hex">#4A90E2</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#F0F5FD;border:1px solid #ccc;"></div>Surface<span class="chip-hex">#F0F5FD</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#C0D8F5;"></div>Border<span class="chip-hex">#C0D8F5</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#1A1A2E;"></div>Text<span class="chip-hex">#1A1A2E</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#5A78A8;"></div>Muted<span class="chip-hex">#5A78A8</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#1A8C5A;"></div>Success<span class="chip-hex">#1A8C5A</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#E07820;"></div>Warning<span class="chip-hex">#E07820</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#D63030;"></div>Error<span class="chip-hex">#D63030</span></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-label">UI Preview — NL Query Interface</div>
+    <div class="mini-ui">
+      <div class="sidebar" style="background:rgba(29,50,105,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,0.12);box-shadow:4px 0 24px rgba(29,50,105,0.18);">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-mark" style="background:#4A90E2;color:#FFFFFF;font-size:11px;">KS</div>
+          <div>
+            <div class="sidebar-logo-text">KSquare Group</div>
+            <div class="sidebar-logo-sub">App Knowledge Graph</div>
+          </div>
+        </div>
+        <div class="sidebar-section-label">Analytics</div>
+        <div class="sidebar-item"><span class="icon">⬡</span> Redundancy Analysis</div>
+        <div class="sidebar-item"><span class="icon">◈</span> Application Map</div>
+        <div class="sidebar-item active" style="border-left-color:#4A90E2;">
+          <span class="icon">◎</span> NL Query
+          <span class="sidebar-badge" style="background:rgba(74,144,226,0.2);color:#4A90E2;">AI</span>
+        </div>
+        <div class="sidebar-section-label" style="margin-top:10px;">Governance</div>
+        <div class="sidebar-item"><span class="icon">▦</span> Baptist Health Portfolio</div>
+        <div class="sidebar-item"><span class="icon">◇</span> Integrations</div>
+        <div class="sidebar-item"><span class="icon">⊙</span> Reports</div>
+      </div>
+      <div class="main-content">
+        <div class="top-bar" style="border-color:#C0D8F5;">
+          <div>
+            <div class="top-bar-title">Natural Language Query</div>
+            <div class="top-bar-meta">AI-powered · Knowledge Graph v3.2</div>
+          </div>
+          <div class="top-bar-right">
+            <button class="btn btn-outline" style="border:1px solid #4A90E2;color:#4A90E2;">History</button>
+            <button class="btn btn-primary" style="background:#4A90E2;">Run Query</button>
+            <div class="avatar" style="background:#4A90E2;">UV</div>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="stats-row">
+            <div class="stat-card" style="background:#F0F5FD;border-color:#C0D8F5;">
+              <div class="stat-value" style="color:#4A90E2;">2,840</div>
+              <div class="stat-label">Queries This Month</div>
+              <div class="stat-delta" style="color:#1A8C5A;">▲ 340 vs last</div>
+            </div>
+            <div class="stat-card" style="background:#F0F5FD;border-color:#C0D8F5;">
+              <div class="stat-value" style="color:#1D3269;">96%</div>
+              <div class="stat-label">Query Accuracy</div>
+              <div class="stat-delta" style="color:#1A8C5A;">▲ 2% improved</div>
+            </div>
+            <div class="stat-card" style="background:#F0F5FD;border-color:#C0D8F5;">
+              <div class="stat-value" style="color:#1D3269;">1.2s</div>
+              <div class="stat-label">Avg Response Time</div>
+              <div class="stat-delta" style="color:#5A78A8;">— p95 3.4s</div>
+            </div>
+            <div class="stat-card" style="background:#F0F5FD;border-color:#C0D8F5;">
+              <div class="stat-value" style="color:#1D3269;">1,250</div>
+              <div class="stat-label">Indexed Applications</div>
+              <div class="stat-delta" style="color:#1A8C5A;">▲ fully synced</div>
+            </div>
+          </div>
+          <div class="main-card" style="border-color:#C0D8F5;">
+            <div class="card-header" style="background:#F0F5FD;border-color:#C0D8F5;">
+              <div class="card-title">◎ Query Results — Cost &amp; Redundancy Insights</div>
+              <button class="btn" style="background:#4A90E2;color:#FFF;font-size:10px;padding:5px 10px;">Export CSV</button>
+            </div>
+            <div class="card-body">
+              <div class="nl-query-bar" style="border-color:#C0D8F5;background:#F0F5FD;">
+                <span class="nl-icon" style="color:#4A90E2;">◎</span>
+                <span class="nl-text">"List all revenue cycle applications with annual license cost above $500K and less than 200 active users"</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot err" style="background:#D63030;"></div>
+                <div class="app-name">Experian Health RevCycle</div>
+                <div class="app-dept">Finance — Revenue Cycle</div>
+                <span class="tag" style="background:rgba(74,144,226,0.1);color:#4A90E2;">$780K/yr</span>
+                <span class="tag error" style="background:rgba(214,48,48,0.1);color:#D63030;">142 users</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot warn" style="background:#E07820;"></div>
+                <div class="app-name">Change Healthcare Claims</div>
+                <div class="app-dept">Finance — Claims Mgmt</div>
+                <span class="tag" style="background:rgba(74,144,226,0.1);color:#4A90E2;">$620K/yr</span>
+                <span class="tag warning" style="background:rgba(224,120,32,0.12);color:#A05A10;">188 users</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot" style="background:#1A8C5A;"></div>
+                <div class="app-name">Epic Resolute (Billing)</div>
+                <div class="app-dept">Finance — Core Billing</div>
+                <span class="tag" style="background:rgba(74,144,226,0.1);color:#4A90E2;">$1.2M/yr</span>
+                <span class="tag success" style="background:rgba(26,140,90,0.1);color:#1A8C5A;">1,840 users</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================
+     VARIATION 4: NAVY + EMERALD
+     =================================================================== -->
+<div class="variation v4">
+  <div class="var-header">
+    <div class="var-number">Variation 04</div>
+    <div class="var-name">Navy + Emerald</div>
+    <div class="var-register">Data and analytics platform vitality — conveys growth, health-outcome alignment, and the active intelligence of a living knowledge graph.</div>
+  </div>
+
+  <div class="tokens-section">
+    <div class="tokens-label">Design Tokens</div>
+    <div class="chips-row">
+      <div class="chip"><div class="chip-swatch" style="background:#1D3269;"></div>Primary<span class="chip-hex">#1D3269</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#10B981;"></div>Accent<span class="chip-hex">#10B981</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#F0FDF8;border:1px solid #ccc;"></div>Surface<span class="chip-hex">#F0FDF8</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#A7F3D0;"></div>Border<span class="chip-hex">#A7F3D0</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#1A1A2E;"></div>Text<span class="chip-hex">#1A1A2E</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#3D7A60;"></div>Muted<span class="chip-hex">#3D7A60</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#10B981;"></div>Success<span class="chip-hex">#10B981</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#F59E0B;"></div>Warning<span class="chip-hex">#F59E0B</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#EF4444;"></div>Error<span class="chip-hex">#EF4444</span></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-label">UI Preview — Portfolio Analytics Dashboard</div>
+    <div class="mini-ui">
+      <div class="sidebar" style="background:rgba(29,50,105,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,0.12);box-shadow:4px 0 24px rgba(29,50,105,0.18);">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-mark" style="background:#10B981;color:#FFFFFF;font-size:11px;">KS</div>
+          <div>
+            <div class="sidebar-logo-text">KSquare Group</div>
+            <div class="sidebar-logo-sub">App Knowledge Graph</div>
+          </div>
+        </div>
+        <div class="sidebar-section-label">Analytics</div>
+        <div class="sidebar-item"><span class="icon">⬡</span> Redundancy Analysis</div>
+        <div class="sidebar-item"><span class="icon">◈</span> Application Map</div>
+        <div class="sidebar-item"><span class="icon">◎</span> NL Query</div>
+        <div class="sidebar-section-label" style="margin-top:10px;">Governance</div>
+        <div class="sidebar-item active" style="border-left-color:#10B981;">
+          <span class="icon">▦</span> Baptist Health Portfolio
+          <span class="sidebar-badge" style="background:rgba(16,185,129,0.2);color:#10B981;">Live</span>
+        </div>
+        <div class="sidebar-item"><span class="icon">◇</span> Integrations</div>
+        <div class="sidebar-item"><span class="icon">⊙</span> Reports</div>
+      </div>
+      <div class="main-content">
+        <div class="top-bar" style="border-color:#A7F3D0;">
+          <div>
+            <div class="top-bar-title">Baptist Health Portfolio</div>
+            <div class="top-bar-meta">1,250 applications · 12 domains · Live sync</div>
+          </div>
+          <div class="top-bar-right">
+            <button class="btn btn-outline" style="border:1px solid #10B981;color:#10B981;">Sync Now</button>
+            <button class="btn btn-primary" style="background:#10B981;">+ Onboard App</button>
+            <div class="avatar" style="background:#10B981;">UV</div>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="stats-row">
+            <div class="stat-card" style="background:#F0FDF8;border-color:#A7F3D0;">
+              <div class="stat-value" style="color:#10B981;">87%</div>
+              <div class="stat-label">Health Score</div>
+              <div class="stat-delta" style="color:#059669;">▲ +3% this month</div>
+            </div>
+            <div class="stat-card" style="background:#F0FDF8;border-color:#A7F3D0;">
+              <div class="stat-value" style="color:#1D3269;">1,250</div>
+              <div class="stat-label">Total Applications</div>
+              <div class="stat-delta" style="color:#059669;">▲ 42 onboarded</div>
+            </div>
+            <div class="stat-card" style="background:#F0FDF8;border-color:#A7F3D0;">
+              <div class="stat-value" style="color:#F59E0B;">47</div>
+              <div class="stat-label">Redundancies Found</div>
+              <div class="stat-delta" style="color:#B45309;">▲ 8 new</div>
+            </div>
+            <div class="stat-card" style="background:#F0FDF8;border-color:#A7F3D0;">
+              <div class="stat-value" style="color:#1D3269;">$2.4M</div>
+              <div class="stat-label">Consolidation Value</div>
+              <div class="stat-delta" style="color:#059669;">▲ identified</div>
+            </div>
+          </div>
+          <div class="main-card" style="border-color:#A7F3D0;">
+            <div class="card-header" style="background:#F0FDF8;border-color:#A7F3D0;">
+              <div class="card-title">▦ Domain Health — Clinical Applications</div>
+              <button class="btn" style="background:#10B981;color:#FFF;font-size:10px;padding:5px 10px;">View All 12 Domains</button>
+            </div>
+            <div class="card-body">
+              <div class="nl-query-bar" style="border-color:#A7F3D0;background:#F0FDF8;">
+                <span class="nl-icon" style="color:#10B981;">⬡</span>
+                <span class="nl-text">"Identify clinical applications by vendor overlap score and show consolidation opportunity ranking by ROI"</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot" style="background:#10B981;"></div>
+                <div class="app-name">Epic EHR Suite</div>
+                <div class="app-dept">Clinical — Enterprise Platform</div>
+                <span class="tag success" style="background:rgba(16,185,129,0.1);color:#059669;">Score 98/100</span>
+                <span class="tag success" style="background:rgba(16,185,129,0.1);color:#059669;">Retain</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot warn" style="background:#F59E0B;"></div>
+                <div class="app-name">Philips ICCA</div>
+                <div class="app-dept">Clinical — Critical Care</div>
+                <span class="tag warning" style="background:rgba(245,158,11,0.12);color:#B45309;">Score 58/100</span>
+                <span class="tag warning" style="background:rgba(245,158,11,0.12);color:#B45309;">Evaluate</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot err" style="background:#EF4444;"></div>
+                <div class="app-name">Meditech Community</div>
+                <div class="app-dept">Clinical — Rural Facilities</div>
+                <span class="tag error" style="background:rgba(239,68,68,0.1);color:#DC2626;">Score 31/100</span>
+                <span class="tag error" style="background:rgba(239,68,68,0.1);color:#DC2626;">Migrate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================
+     VARIATION 5: NAVY + CORAL
+     =================================================================== -->
+<div class="variation v5">
+  <div class="var-header">
+    <div class="var-number">Variation 05</div>
+    <div class="var-name">Navy + Coral</div>
+    <div class="var-register">Energetic modern urgency — injects warmth and momentum into a dense data platform, making insights feel active and decision-driven.</div>
+  </div>
+
+  <div class="tokens-section">
+    <div class="tokens-label">Design Tokens</div>
+    <div class="chips-row">
+      <div class="chip"><div class="chip-swatch" style="background:#1D3269;"></div>Primary<span class="chip-hex">#1D3269</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#FF6B4A;"></div>Accent<span class="chip-hex">#FF6B4A</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#FFF5F2;border:1px solid #ccc;"></div>Surface<span class="chip-hex">#FFF5F2</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#FFD0C5;"></div>Border<span class="chip-hex">#FFD0C5</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#1A1A2E;"></div>Text<span class="chip-hex">#1A1A2E</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#A06050;"></div>Muted<span class="chip-hex">#A06050</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#2A8C55;"></div>Success<span class="chip-hex">#2A8C55</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#E09010;"></div>Warning<span class="chip-hex">#E09010</span></div>
+      <div class="chip"><div class="chip-swatch" style="background:#FF6B4A;"></div>Error<span class="chip-hex">#FF6B4A</span></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-label">UI Preview — Integration & Reports Hub</div>
+    <div class="mini-ui">
+      <div class="sidebar" style="background:rgba(29,50,105,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,0.12);box-shadow:4px 0 24px rgba(29,50,105,0.18);">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-mark" style="background:#FF6B4A;color:#FFFFFF;font-size:11px;">KS</div>
+          <div>
+            <div class="sidebar-logo-text">KSquare Group</div>
+            <div class="sidebar-logo-sub">App Knowledge Graph</div>
+          </div>
+        </div>
+        <div class="sidebar-section-label">Analytics</div>
+        <div class="sidebar-item"><span class="icon">⬡</span> Redundancy Analysis</div>
+        <div class="sidebar-item"><span class="icon">◈</span> Application Map</div>
+        <div class="sidebar-item"><span class="icon">◎</span> NL Query</div>
+        <div class="sidebar-section-label" style="margin-top:10px;">Governance</div>
+        <div class="sidebar-item"><span class="icon">▦</span> Baptist Health Portfolio</div>
+        <div class="sidebar-item active" style="border-left-color:#FF6B4A;">
+          <span class="icon">◇</span> Integrations
+          <span class="sidebar-badge" style="background:rgba(255,107,74,0.2);color:#FF6B4A;">318</span>
+        </div>
+        <div class="sidebar-item"><span class="icon">⊙</span> Reports</div>
+      </div>
+      <div class="main-content">
+        <div class="top-bar" style="border-color:#FFD0C5;">
+          <div>
+            <div class="top-bar-title">Integration Registry</div>
+            <div class="top-bar-meta">Baptist Health · 318 active integrations</div>
+          </div>
+          <div class="top-bar-right">
+            <button class="btn btn-outline" style="border:1px solid #FF6B4A;color:#FF6B4A;">Filter</button>
+            <button class="btn btn-primary" style="background:#FF6B4A;">+ Register Integration</button>
+            <div class="avatar" style="background:#FF6B4A;">UV</div>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="stats-row">
+            <div class="stat-card" style="background:#FFF5F2;border-color:#FFD0C5;">
+              <div class="stat-value" style="color:#FF6B4A;">318</div>
+              <div class="stat-label">Active Integrations</div>
+              <div class="stat-delta" style="color:#2A8C55;">▲ 24 new this sprint</div>
+            </div>
+            <div class="stat-card" style="background:#FFF5F2;border-color:#FFD0C5;">
+              <div class="stat-value" style="color:#1D3269;">94%</div>
+              <div class="stat-label">Documented Coverage</div>
+              <div class="stat-delta" style="color:#2A8C55;">▲ 6% gain</div>
+            </div>
+            <div class="stat-card" style="background:#FFF5F2;border-color:#FFD0C5;">
+              <div class="stat-value" style="color:#E09010;">19</div>
+              <div class="stat-label">Missing Contracts</div>
+              <div class="stat-delta" style="color:#E09010;">— action needed</div>
+            </div>
+            <div class="stat-card" style="background:#FFF5F2;border-color:#FFD0C5;">
+              <div class="stat-value" style="color:#1D3269;">7</div>
+              <div class="stat-label">Critical Path Gaps</div>
+              <div class="stat-delta" style="color:#FF6B4A;">▲ escalated</div>
+            </div>
+          </div>
+          <div class="main-card" style="border-color:#FFD0C5;">
+            <div class="card-header" style="background:#FFF5F2;border-color:#FFD0C5;">
+              <div class="card-title">◇ Integration Health — HL7 / FHIR Layer</div>
+              <button class="btn" style="background:#FF6B4A;color:#FFF;font-size:10px;padding:5px 10px;">Resolve Issues</button>
+            </div>
+            <div class="card-body">
+              <div class="nl-query-bar" style="border-color:#FFD0C5;background:#FFF5F2;">
+                <span class="nl-icon" style="color:#FF6B4A;">◇</span>
+                <span class="nl-text">"Flag all HL7 v2 integrations that haven't migrated to FHIR R4 and cross Baptist Health system boundaries"</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot err" style="background:#FF6B4A;"></div>
+                <div class="app-name">LabCorp Results Feed</div>
+                <div class="app-dept">Lab — Results Delivery</div>
+                <span class="tag" style="background:rgba(255,107,74,0.1);color:#D94020;">HL7 v2.5</span>
+                <span class="tag error" style="background:rgba(255,107,74,0.12);color:#D94020;">No FHIR</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot warn" style="background:#E09010;"></div>
+                <div class="app-name">Radiology PACS Bridge</div>
+                <div class="app-dept">Imaging — Cross-facility</div>
+                <span class="tag" style="background:rgba(224,144,16,0.12);color:#9A6408;">HL7 v2.8</span>
+                <span class="tag warning" style="background:rgba(224,144,16,0.12);color:#9A6408;">In Migration</span>
+              </div>
+              <div class="app-row">
+                <div class="app-dot" style="background:#2A8C55;"></div>
+                <div class="app-name">Epic FHIR Gateway</div>
+                <div class="app-dept">Enterprise — Core API</div>
+                <span class="tag success" style="background:rgba(42,140,85,0.1);color:#2A8C55;">FHIR R4</span>
+                <span class="tag success" style="background:rgba(42,140,85,0.1);color:#2A8C55;">Compliant</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

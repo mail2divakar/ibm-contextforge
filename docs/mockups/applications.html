@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Applications — AppGraph</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #1D3269;
+    --accent: #00A8CC;
+    --bg: #FFFFFF;
+    --surface: #F8FAFC;
+    --border: #E2E8F0;
+    --fg: #0F172A;
+    --muted: #64748B;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html, body {
+    min-width: 1440px; min-height: 100vh;
+    font-family: var(--font); background: var(--surface);
+    color: var(--fg); -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { display: flex; min-height: 100vh; width: 1440px; margin: 0 auto; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px; min-height: 100vh;
+    background: rgba(29,50,105,0.88);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh; flex-shrink: 0;
+  }
+  .sidebar-logo { padding: 28px 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.10); margin-bottom: 8px; }
+  .sidebar-logo .brand { font-size: 18px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.3px; }
+  .sidebar-logo .sub { font-size: 11px; font-weight: 500; color: rgba(0,168,204,0.90); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+  .nav { flex: 1; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.65); border-left: 3px solid transparent; transition: background 0.15s; }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.90); }
+  .nav-item.active { background: rgba(0,168,204,0.20); border-left: 3px solid #00A8CC; color: #FFFFFF; font-weight: 600; }
+  .nav-item .icon { font-size: 16px; flex-shrink: 0; width: 20px; text-align: center; }
+  .nav-section-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.30); padding: 14px 14px 6px; }
+  .sidebar-footer { padding: 16px 16px 24px; border-top: 1px solid rgba(255,255,255,0.10); }
+  .avatar-row { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #00A8CC 0%, #1D3269 100%); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .avatar-info .name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.92); }
+  .avatar-info .role { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  /* ── Topbar ── */
+  .topbar { height: 56px; background: #FFFFFF; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 100; flex-shrink: 0; }
+  .topbar-title { font-size: 17px; font-weight: 700; color: var(--fg); letter-spacing: -0.3px; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-meta { font-size: 12.5px; color: var(--muted); }
+  .topbar-meta strong { color: var(--fg); font-weight: 600; }
+  .btn-refresh { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); box-shadow: 0 2px 8px rgba(0,168,204,0.30); }
+
+  /* ── Search + filter bar ── */
+  .search-filter-bar { background: #FFFFFF; border-bottom: 1px solid var(--border); padding: 12px 32px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+  .search-input-wrap { position: relative; flex: 0 0 320px; }
+  .search-input {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 8px 14px 8px 36px;
+    font-size: 13.5px; font-family: var(--font); color: var(--fg); outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,168,204,0.12); }
+  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; }
+  .search-input-wrap .kbd {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; font-weight: 600; background: var(--border); border-radius: 4px;
+    padding: 2px 5px; color: var(--muted); font-family: var(--font);
+  }
+
+  .filter-select {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 12px; font-size: 13px; font-weight: 500; color: var(--fg);
+    font-family: var(--font); cursor: pointer; appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 8px center;
+  }
+  .filter-select.active { border-color: var(--accent); background-color: rgba(0,168,204,0.06); color: var(--primary); font-weight: 600; }
+
+  .filter-spacer { flex: 1; }
+  .results-count { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .results-count strong { color: var(--fg); font-weight: 700; }
+  .clear-filters { font-size: 12.5px; font-weight: 500; color: var(--accent); cursor: pointer; }
+
+  /* ── Sort toggle ── */
+  .sort-btn { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 5px 10px; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; font-family: var(--font); display: flex; align-items: center; gap: 5px; }
+  .sort-btn.active { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Content wrapper ── */
+  .content-wrap { flex: 1; padding: 0; background: var(--surface); display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── Table ── */
+  .table-container { flex: 1; overflow: auto; }
+  .app-table { width: 100%; border-collapse: collapse; background: #FFFFFF; }
+  .app-table thead { position: sticky; top: 0; z-index: 10; }
+  .app-table th {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 11px 16px; text-align: left;
+    font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted);
+    white-space: nowrap; cursor: pointer; user-select: none;
+  }
+  .app-table th:hover { color: var(--fg); }
+  .app-table th.sorted { color: var(--primary); }
+  .sort-indicator { font-size: 10px; margin-left: 3px; }
+
+  .app-table td {
+    padding: 0 16px; height: 52px; vertical-align: middle;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+    font-size: 13.5px; color: var(--fg);
+  }
+  .app-table tr:hover td { background: rgba(248,250,252,0.8); cursor: pointer; }
+  .app-table tr.selected td { background: rgba(0,168,204,0.06); }
+  .app-table tr:last-child td { border-bottom: none; }
+
+  /* App name link */
+  .app-name-link {
+    color: var(--accent); font-weight: 600; text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13.5px;
+  }
+  .app-name-link:hover { text-decoration: underline; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .badge-cots { background: rgba(29,50,105,0.10); color: var(--primary); }
+  .badge-homegrown { background: rgba(0,168,204,0.12); color: #007A96; }
+  .badge-unclassified { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+  .badge-yes { background: rgba(16,185,129,0.12); color: #047857; }
+  .badge-no { background: rgba(226,232,240,0.8); color: var(--muted); }
+
+  /* Truncated text */
+  .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; display: block; }
+  .text-muted { color: var(--muted); font-size: 13px; }
+
+  /* ── Row action indicator (chevron on hover) ── */
+  .row-action { color: var(--muted); font-size: 12px; opacity: 0; transition: opacity 0.15s; }
+  tr:hover .row-action { opacity: 1; }
+
+  /* ── Pagination bar ── */
+  .pagination-bar {
+    background: #FFFFFF; border-top: 1px solid var(--border);
+    padding: 12px 32px; display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .page-info { font-size: 13px; color: var(--muted); }
+  .page-info strong { color: var(--fg); }
+  .page-controls { display: flex; align-items: center; gap: 4px; }
+  .page-btn {
+    width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 7px;
+    background: #FFFFFF; color: var(--fg); font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .page-btn:hover { background: var(--surface); border-color: var(--accent); }
+  .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+  .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .page-btn.wide { width: auto; padding: 0 12px; }
+  .page-size-select { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 5px 10px; font-size: 12.5px; font-family: var(--font); color: var(--muted); cursor: pointer; }
+
+  /* ── Detail panel ── */
+  .detail-panel-backdrop {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.40);
+    z-index: 200; display: flex; justify-content: flex-end;
+  }
+  .detail-panel {
+    width: 480px; height: 100vh; background: #FFFFFF;
+    box-shadow: -8px 0 32px rgba(29,50,105,0.15);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .detail-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+  .detail-title { font-size: 17px; font-weight: 700; color: var(--fg); line-height: 1.3; max-width: 380px; }
+  .detail-close { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 8px; background: none; cursor: pointer; font-size: 16px; color: var(--muted); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .detail-close:hover { background: var(--surface); }
+
+  .detail-body { flex: 1; overflow-y: auto; padding: 20px 24px 24px; }
+  .detail-section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; margin-top: 20px; }
+  .detail-section-label:first-child { margin-top: 0; }
+
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  .detail-field {}
+  .detail-field .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 3px; }
+  .detail-field .value { font-size: 13.5px; font-weight: 500; color: var(--fg); }
+  .detail-field .value.muted { color: var(--muted); font-style: italic; font-weight: 400; }
+  .detail-field.full { grid-column: 1 / -1; }
+
+  .detail-footer { padding: 16px 24px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 10px; }
+  .btn-find-similar { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); flex: 1; box-shadow: 0 2px 8px rgba(0,168,204,0.25); }
+  .btn-find-similar:hover { background: #0090B0; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">KSquare Group</div>
+      <div class="sub">AppGraph</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="#"><span class="icon">🏠</span>Dashboard</a>
+      <a class="nav-item" href="#"><span class="icon">💬</span>Query</a>
+      <a class="nav-item" href="#"><span class="icon">📊</span>Analytics</a>
+      <a class="nav-item" href="#"><span class="icon">🔗</span>Redundancy</a>
+      <a class="nav-item active" href="#"><span class="icon">📋</span>Applications</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar-row">
+        <div class="avatar">UK</div>
+        <div class="avatar-info">
+          <div class="name">Uday Kumar</div>
+          <div class="role">T&amp;D</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <span class="topbar-title">Applications</span>
+      <div class="topbar-right">
+        <span class="topbar-meta">Last refresh: <strong>Jun 12, 2026</strong> · 1,250 apps</span>
+        <button class="btn-refresh">Refresh Data</button>
+      </div>
+    </header>
+
+    <!-- Search + filter bar -->
+    <div class="search-filter-bar">
+
+      <!-- Search input -->
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" placeholder="Search by name…" value="imaging"/>
+        <span class="kbd">⌘K</span>
+      </div>
+
+      <!-- Filters -->
+      <select class="filter-select active">
+        <option>Business Process: Imaging</option>
+      </select>
+
+      <select class="filter-select">
+        <option>Application Type: All</option>
+        <option>COTS</option>
+        <option>Homegrown</option>
+      </select>
+
+      <select class="filter-select">
+        <option>Baptist Managed: All</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+
+      <select class="filter-select">
+        <option>Company: All</option>
+      </select>
+
+      <span class="clear-filters">✕ Clear filters</span>
+
+      <div class="filter-spacer"></div>
+
+      <!-- Sort + count -->
+      <span class="results-count"><strong>67</strong> of 1,250 applications</span>
+
+      <button class="sort-btn active">
+        <span>A–Z</span>
+        <span>↑</span>
+      </button>
+
+    </div>
+
+    <!-- Table + pagination -->
+    <div class="content-wrap">
+      <div class="table-container">
+        <table class="app-table" role="table">
+          <thead>
+            <tr>
+              <th class="sorted">Application Name <span class="sort-indicator">↑</span></th>
+              <th>Company</th>
+              <th>Application Type</th>
+              <th>Business Process</th>
+              <th>Baptist Managed</th>
+              <th>Business Owner</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 — selected/detail open -->
+            <tr class="selected">
+              <td>
+                <a class="app-name-link" href="#" aria-label="View 3D Scanner details">
+                  3D Scanner
+                </a>
+              </td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Radiation Oncology</span></td>
+              <td><span class="badge badge-yes">Yes</span></td>
+              <td><span class="text-truncate">Alonso Gutierrez</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View ADAPTIIV details">ADAPTIIV MEDICAL TECHNOLOGIES</a></td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Radiation Oncology</span></td>
+              <td><span class="badge badge-yes">Yes</span></td>
+              <td><span class="text-truncate">Maria Chen</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View Agfa IMPAX details">Agfa IMPAX</a></td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-no">No</span></td>
+              <td><span class="text-truncate">Robert Flores</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View Agility EHR details">Agility EHR</a></td>
+              <td><span class="text-truncate">Doctors Hospital</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-no">No</span></td>
+              <td><span class="text-muted">Not specified</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View AIR Total Imaging details">AIR Total Imaging</a></td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-yes">Yes</span></td>
+              <td><span class="text-truncate">Patricia Moore</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View Amicas PACS details">Amicas PACS</a></td>
+              <td><span class="text-truncate">South Miami Hospital</span></td>
+              <td><span class="badge badge-unclassified">Unclassified</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-no">No</span></td>
+              <td><span class="text-muted">Not specified</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View Antares PACS details">Antares PACS</a></td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-yes">Yes</span></td>
+              <td><span class="text-truncate">Luis Perez</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View Aquarius NET details">Aquarius NET</a></td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-no">No</span></td>
+              <td><span class="text-truncate">James Wilson</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View BreastScreen details">BreastScreen Analytics</a></td>
+              <td><span class="text-truncate">Baptist Health South Florida</span></td>
+              <td><span class="badge badge-homegrown">Homegrown</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-yes">Yes</span></td>
+              <td><span class="text-truncate">Sandra Kim</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <tr>
+              <td><a class="app-name-link" href="#" aria-label="View Carestream PACS details">Carestream PACS</a></td>
+              <td><span class="text-truncate">Homestead Hospital</span></td>
+              <td><span class="badge badge-cots">COTS</span></td>
+              <td><span class="text-truncate">Imaging</span></td>
+              <td><span class="badge badge-no">No</span></td>
+              <td><span class="text-muted">Not specified</span></td>
+              <td><span class="row-action">›</span></td>
+            </tr>
+
+            <!-- Separator row showing page context -->
+            <tr style="background: rgba(248,250,252,0.6);">
+              <td colspan="7" style="padding: 8px 16px; text-align:center; font-size:12px; color:var(--muted); font-style:italic; height:36px;">
+                Showing rows 1–10 of 67 · Sorted by Application Name (A–Z)
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div><!-- /table-container -->
+
+      <!-- Pagination bar -->
+      <div class="pagination-bar">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="page-info">Showing <strong>1–10</strong> of <strong>67</strong> applications</span>
+          <select class="page-size-select">
+            <option>10 per page</option>
+            <option>25 per page</option>
+            <option selected>50 per page</option>
+          </select>
+        </div>
+        <div class="page-controls">
+          <button class="page-btn wide" disabled>← Prev</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn wide">Next →</button>
+        </div>
+      </div>
+
+    </div><!-- /content-wrap -->
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ══════════════ DETAIL PANEL (3D Scanner) ══════════════ -->
+<div class="detail-panel-backdrop">
+  <div class="detail-panel" role="dialog" aria-label="Application detail: 3D Scanner">
+
+    <div class="detail-header">
+      <div class="detail-title">3D Scanner</div>
+      <button class="detail-close" aria-label="Close detail panel">✕</button>
+    </div>
+
+    <div class="detail-body">
+
+      <!-- Overview -->
+      <div class="detail-section-label">Overview</div>
+      <div class="detail-grid">
+        <div class="detail-field full">
+          <div class="label">Description</div>
+          <div class="value">3D medical imaging scanner used for dosimetry QA and radiation oncology treatment planning. Provides high-resolution volumetric imaging for patient positioning verification.</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Application Type</div>
+          <div class="value"><span class="badge badge-cots" style="font-size:12px;">COTS</span></div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Architecture Type</div>
+          <div class="value">Client Server</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Publisher</div>
+          <div class="value">ADAPTIIV MEDICAL TECHNOLOGIES</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Business Process</div>
+          <div class="value">Radiation Oncology</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Baptist Managed</div>
+          <div class="value"><span class="badge badge-yes" style="font-size:12px;">Yes</span></div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Install Status</div>
+          <div class="value">In Production</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Business Criticality</div>
+          <div class="value">High</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Environment</div>
+          <div class="value">Production</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Application URL</div>
+          <div class="value"><a href="#" style="color:var(--accent); font-size:13px;">View in ServiceNow ↗</a></div>
+        </div>
+      </div>
+
+      <!-- Ownership -->
+      <div class="detail-section-label" style="margin-top:20px;">Ownership</div>
+      <div class="detail-grid">
+        <div class="detail-field">
+          <div class="label">Business Owner</div>
+          <div class="value">Alonso Gutierrez</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">T&amp;D Application Owner</div>
+          <div class="value">Maria Chen</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Primary Engineer</div>
+          <div class="value">David Park</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Application Support Group</div>
+          <div class="value">CARETech Sustainment Radiation Oncology</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Application Portfolio Manager</div>
+          <div class="value">Susan Torres</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Company</div>
+          <div class="value">Baptist Health South Florida</div>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div class="detail-section-label" style="margin-top:20px;">Record Metadata</div>
+      <div class="detail-grid">
+        <div class="detail-field">
+          <div class="label">Active</div>
+          <div class="value"><span class="badge badge-yes" style="font-size:12px;">Yes</span></div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Last Updated</div>
+          <div class="value">May 14, 2026</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Last Updated By</div>
+          <div class="value">Michael Johnson</div>
+        </div>
+        <div class="detail-field">
+          <div class="label">Application ID</div>
+          <div class="value" style="font-family:monospace; font-size:11px; color:var(--muted);">a7f3c2d1-9e4b…</div>
+        </div>
+      </div>
+
+    </div><!-- /detail-body -->
+
+    <div class="detail-footer">
+      <button class="btn-find-similar">🔍 Find similar apps</button>
+    </div>
+
+  </div>
+</div><!-- /detail-panel-backdrop -->
+
+</body>
+</html>

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Application Knowledge Graph — UX Design Directions</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #F0F2F5;
+    padding: 32px 24px;
+    min-width: 1600px;
+  }
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1D3269;
+    letter-spacing: -0.3px;
+  }
+  .page-header p {
+    font-size: 13px;
+    color: #6B7280;
+    margin-top: 6px;
+  }
+  .directions-row {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .direction-col {
+    flex: 1;
+    max-width: 500px;
+    min-width: 460px;
+  }
+  .direction-label {
+    margin-bottom: 12px;
+  }
+  .direction-label h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1D3269;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .direction-label p {
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 3px;
+  }
+
+  /* ===================== BROWSER FRAME ===================== */
+  .browser-frame {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .browser-chrome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #E8EAED;
+    border-bottom: 1px solid #D1D5DB;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; }
+  .dot-y { background: #FFBD2E; }
+  .dot-g { background: #28C840; }
+  .url-bar {
+    flex: 1;
+    background: white;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: #6B7280;
+    border: 1px solid #D1D5DB;
+    margin-left: 8px;
+  }
+
+  /* ===================== DIRECTION 1: COMMAND CENTER ===================== */
+  .d1-app {
+    display: flex;
+    height: 480px;
+    background: #FAFAFA;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  .d1-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    background: rgba(29, 50, 105, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+  .d1-sidebar-header {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .d1-logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .d1-logo-icon {
+    width: 28px;
+    height: 28px;
+    background: #C9952A;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .d1-logo-icon svg { width: 16px; height: 16px; }
+  .d1-logo-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .d1-logo-sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-transform: none;
+  }
+  .d1-nav {
+    padding: 12px 0;
+    flex: 1;
+  }
+  .d1-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.1s;
+  }
+  .d1-nav-item.active {
+    color: #FFFFFF;
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid #C9952A;
+  }
+  .d1-nav-item svg { width: 14px; height: 14px; opacity: 0.8; flex-shrink: 0; }
+  .d1-nav-item.active svg { opacity: 1; }
+  .d1-sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .d1-user-tag {
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.2px;
+  }
+  .d1-main {
+    flex: 1;
+    overflow: hidden;
+    background: #F8F9FA;
+    display: flex;
+    flex-direction: column;
+  }
+  .d1-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+    flex-shrink: 0;
+  }
+  .d1-page-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.2px;
+  }
+  .d1-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .d1-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .d1-badge-live {
+    background: rgba(34,197,94,0.12);
+    color: #16A34A;
+    border: 1px solid rgba(34,197,94,0.25);
+  }
+  .d1-badge-sync {
+    background: rgba(201,149,42,0.12);
+    color: #B97A00;
+    border: 1px solid rgba(201,149,42,0.25);
+  }
+  .d1-content {
+    flex: 1;
+    padding: 16px 20px;
+    overflow: hidden;
+  }
+  .d1-metrics-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .d1-metric-card {
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .d1-metric-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+  }
+  .d1-metric-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+    letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .d1-metric-delta {
+    font-size: 10px;
+    color: #6B7280;
+    margin-top: 5px;
+  }
+  .d1-metric-delta span {
+    color: #C9952A;
+    font-weight: 600;
+  }
+  .d1-chart-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .d1-chart-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .d1-chart-subtitle {
+    font-size: 10px;
+    font-weight: 400;
+    color: #9CA3AF;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .d1-bar-chart { display: flex; flex-direction: column; gap: 7px; }
+  .d1-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .d1-bar-label {
+    font-size: 10px;
+    color: #6B7280;
+    width: 90px;
+    flex-shrink: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .d1-bar-track {
+    flex: 1;
+    height: 14px;
+    background: #F3F4F6;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .d1-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #1D3269;
+    position: relative;
+  }
+  .d1-bar-fill.accent { background: #C9952A; }
+  .d1-bar-count {
+    font-size: 10px;
+    color: #9CA3AF;
+    width: 36px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===================== DIRECTION 2: GLASS PLATFORM ===================== */
+  .d2-app {
+    display: flex;
+    height: 480px;
+    background: linear-gradient(135deg, #EEF2FF 0%, #F0F9FF 50%, #E8F5F8 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    position: relative;
+  }
+  .d2-bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+  }
+  .d2-bg-blob-1 {
+    width: 300px; height: 300px;
+    background: rgba(0, 168, 204, 0.12);
+    top: -80px; right: 40px;
+  }
+  .d2-bg-blob-2 {
+    width: 200px; height: 200px;
+    background: rgba(29, 50, 105, 0.08);
+    bottom: 20px; right: 100px;
+  }
+  .d2-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    background: rgba(29, 50, 105, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .d2-sidebar-header {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .d2-logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .d2-logo-icon {
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 168, 204, 0.85);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,168,204,0.3);
+  }
+  .d2-logo-icon svg { width: 16px; height: 16px; }
+  .d2-logo-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+  .d2-logo-sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+  }
+  .d2-nav {
+    padding: 16px 0;
+    flex: 1;
+  }
+  .d2-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    border-radius: 0;
+    margin: 1px 0;
+  }
+  .d2-nav-item.active {
+    color: #FFFFFF;
+    background: rgba(0, 168, 204, 0.2);
+    border-right: 3px solid #00A8CC;
+  }
+  .d2-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .d2-sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .d2-user-tag { font-size: 10px; color: rgba(255,255,255,0.4); }
+  .d2-main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .d2-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.6);
+  }
+  .d2-page-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1D3269;
+    letter-spacing: -0.3px;
+  }
+  .d2-pill {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    background: rgba(0,168,204,0.12);
+    color: #0080A0;
+    border: 1px solid rgba(0,168,204,0.25);
+  }
+  .d2-content {
+    flex: 1;
+    padding: 18px 22px;
+    overflow: hidden;
+  }
+  .d2-metrics-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .d2-metric-card {
+    flex: 1;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.85);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 16px rgba(29,50,105,0.07), 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .d2-metric-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .d2-metric-icon-1 { background: rgba(29,50,105,0.08); }
+  .d2-metric-icon-2 { background: rgba(0,168,204,0.1); }
+  .d2-metric-icon-3 { background: rgba(245,158,11,0.1); }
+  .d2-metric-icon svg { width: 14px; height: 14px; }
+  .d2-metric-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9CA3AF;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .d2-metric-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1D3269;
+    line-height: 1;
+    letter-spacing: -0.8px;
+  }
+  .d2-metric-sub {
+    font-size: 10px;
+    color: #6B7280;
+    margin-top: 4px;
+  }
+  .d2-chart-card {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.85);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 16px rgba(29,50,105,0.07);
+  }
+  .d2-chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .d2-chart-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(0,168,204,0.08);
+    color: #0080A0;
+    font-weight: 500;
+  }
+  .d2-bar-chart { display: flex; flex-direction: column; gap: 9px; }
+  .d2-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .d2-bar-label {
+    font-size: 10px;
+    color: #6B7280;
+    width: 95px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .d2-bar-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .d2-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #1D3269, #00A8CC);
+  }
+  .d2-bar-fill.alt { background: linear-gradient(90deg, #00A8CC, #00C8EE); }
+  .d2-bar-count {
+    font-size: 10px;
+    color: #9CA3AF;
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  /* ===================== DIRECTION 3: ENTERPRISE BOLD ===================== */
+  .d3-app {
+    display: flex;
+    height: 480px;
+    background: #F5F7FA;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .d3-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    background: rgba(29, 50, 105, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 4px 0 24px rgba(29,50,105,0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+  .d3-sidebar-header {
+    padding: 20px 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .d3-logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .d3-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #4A90E2, #1D3269);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(74,144,226,0.4);
+  }
+  .d3-logo-icon svg { width: 18px; height: 18px; }
+  .d3-logo-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+  }
+  .d3-logo-sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+    margin-top: 1px;
+    display: block;
+  }
+  .d3-nav {
+    padding: 12px 0;
+    flex: 1;
+  }
+  .d3-nav-section {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 10px 16px 5px;
+  }
+  .d3-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    position: relative;
+    margin: 1px 0;
+  }
+  .d3-nav-item.active {
+    color: #FFFFFF;
+    background: rgba(255,255,255,0.07);
+    font-weight: 700;
+  }
+  .d3-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #4A90E2;
+    border-radius: 0 3px 3px 0;
+  }
+  .d3-nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .d3-sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .d3-user-info { display: flex; align-items: center; gap: 8px; }
+  .d3-avatar {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(74,144,226,0.4);
+    border: 1px solid rgba(74,144,226,0.6);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+  }
+  .d3-user-tag { font-size: 10px; color: rgba(255,255,255,0.45); }
+  .d3-main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .d3-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 52px;
+    background: #FFFFFF;
+    border-bottom: 2px solid #E5E9F0;
+    flex-shrink: 0;
+  }
+  .d3-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .d3-breadcrumb-item {
+    font-size: 11px;
+    color: #9CA3AF;
+  }
+  .d3-breadcrumb-sep {
+    font-size: 11px;
+    color: #D1D5DB;
+  }
+  .d3-breadcrumb-current {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1D3269;
+  }
+  .d3-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .d3-btn {
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  .d3-btn-primary {
+    background: #4A90E2;
+    color: white;
+    box-shadow: 0 1px 4px rgba(74,144,226,0.35);
+  }
+  .d3-btn-outline {
+    background: transparent;
+    color: #4A90E2;
+    border: 1.5px solid #4A90E2;
+  }
+  .d3-content {
+    flex: 1;
+    padding: 20px 24px;
+    overflow: hidden;
+  }
+  .d3-section-heading {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .d3-section-sub {
+    font-size: 11px;
+    color: #6B7280;
+    margin-bottom: 16px;
+  }
+  .d3-metrics-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .d3-metric-card {
+    flex: 1;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+    border-top: 3px solid transparent;
+  }
+  .d3-metric-card-1 { border-top-color: #1D3269; }
+  .d3-metric-card-2 { border-top-color: #4A90E2; }
+  .d3-metric-card-3 { border-top-color: #F59E0B; }
+  .d3-metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .d3-metric-value {
+    font-size: 30px;
+    font-weight: 900;
+    color: #111827;
+    line-height: 1;
+    letter-spacing: -1.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .d3-metric-meta {
+    font-size: 10px;
+    color: #9CA3AF;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .d3-trend-up {
+    color: #10B981;
+    font-weight: 600;
+  }
+  .d3-chart-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .d3-chart-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #F3F4F6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .d3-chart-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .d3-chart-meta {
+    font-size: 10px;
+    color: #9CA3AF;
+  }
+  .d3-chart-body { padding: 14px 16px; }
+  .d3-bar-chart { display: flex; flex-direction: column; gap: 9px; }
+  .d3-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .d3-bar-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #374151;
+    width: 95px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .d3-bar-track {
+    flex: 1;
+    height: 16px;
+    background: #F3F4F6;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .d3-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .d3-bar-fill-1 { background: #1D3269; }
+  .d3-bar-fill-2 { background: #4A90E2; }
+  .d3-bar-fill-3 { background: #60A5FA; }
+  .d3-bar-fill-4 { background: #93C5FD; }
+  .d3-bar-fill-5 { background: #BFDBFE; }
+  .d3-bar-count {
+    font-size: 10px;
+    font-weight: 600;
+    color: #374151;
+    width: 36px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>IT Application Knowledge Graph — Visual Design Directions</h1>
+  <p>Baptist Health South Florida &nbsp;·&nbsp; KSquare Group &nbsp;·&nbsp; Analytics Dashboard &nbsp;·&nbsp; June 2026</p>
+</div>
+
+<div class="directions-row">
+
+  <!-- ============================================================ -->
+  <!-- DIRECTION 1: COMMAND CENTER -->
+  <!-- ============================================================ -->
+  <div class="direction-col">
+    <div class="direction-label">
+      <h2>Direction 1 — Command Center</h2>
+      <p>Dense, data-forward. Bloomberg meets Datadog. Accent: #C9952A gold.</p>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="url-bar">https://appgraph.baptisthealth.net/analytics</div>
+      </div>
+      <div class="d1-app">
+        <!-- Sidebar -->
+        <div class="d1-sidebar">
+          <div class="d1-sidebar-header">
+            <div class="d1-logo-mark">
+              <div class="d1-logo-icon">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="5" cy="5" r="2" fill="white"/>
+                  <circle cx="11" cy="5" r="2" fill="white" opacity="0.6"/>
+                  <circle cx="8" cy="11" r="2" fill="white" opacity="0.8"/>
+                  <line x1="5" y1="5" x2="11" y2="5" stroke="white" stroke-width="1" opacity="0.5"/>
+                  <line x1="5" y1="5" x2="8" y2="11" stroke="white" stroke-width="1" opacity="0.5"/>
+                  <line x1="11" y1="5" x2="8" y2="11" stroke="white" stroke-width="1" opacity="0.5"/>
+                </svg>
+              </div>
+              <div>
+                <div class="d1-logo-text">AppGraph</div>
+                <div class="d1-logo-sub">KSquare Group</div>
+              </div>
+            </div>
+          </div>
+          <nav class="d1-nav">
+            <div class="d1-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.6"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.6"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/></svg>
+              Dashboard
+            </div>
+            <div class="d1-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><line x1="9" y1="9" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Query
+            </div>
+            <div class="d1-nav-item active">
+              <svg viewBox="0 0 14 14" fill="none"><polyline points="1,10 4,6 7,8 10,4 13,2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Analytics
+            </div>
+            <div class="d1-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="2" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="5" y="8" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><line x1="4" y1="6" x2="4" y2="7" stroke="currentColor" stroke-width="1"/><line x1="10" y1="6" x2="10" y2="7" stroke="currentColor" stroke-width="1"/><line x1="4" y1="7" x2="7" y2="9" stroke="currentColor" stroke-width="1"/><line x1="10" y1="7" x2="9" y2="9" stroke="currentColor" stroke-width="1"/></svg>
+              Redundancy
+            </div>
+            <div class="d1-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="3" x2="5" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="3" x2="9" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1" opacity="0.6"/></svg>
+              Applications
+            </div>
+          </nav>
+          <div class="d1-sidebar-footer">
+            <div class="d1-user-tag">Baptist Health SF</div>
+          </div>
+        </div>
+        <!-- Main Content -->
+        <div class="d1-main">
+          <div class="d1-topbar">
+            <div class="d1-page-title">Analytics Dashboard</div>
+            <div class="d1-topbar-right">
+              <span class="d1-badge d1-badge-live">Live</span>
+              <span class="d1-badge d1-badge-sync">Last sync: 2m ago</span>
+            </div>
+          </div>
+          <div class="d1-content">
+            <div class="d1-metrics-row">
+              <div class="d1-metric-card">
+                <div class="d1-metric-label">Total Applications</div>
+                <div class="d1-metric-value">1,250</div>
+                <div class="d1-metric-delta">Across <span>14</span> facilities</div>
+              </div>
+              <div class="d1-metric-card">
+                <div class="d1-metric-label">Imaging Apps</div>
+                <div class="d1-metric-value" style="color:#C9952A;">67</div>
+                <div class="d1-metric-delta">PACS, RIS, <span>+5 types</span></div>
+              </div>
+              <div class="d1-metric-card">
+                <div class="d1-metric-label">Redundancy Clusters</div>
+                <div class="d1-metric-value" style="color:#DC2626;">5</div>
+                <div class="d1-metric-delta">Flagged <span>review</span></div>
+              </div>
+            </div>
+            <div class="d1-chart-card">
+              <div class="d1-chart-title">
+                Application Distribution by Category
+                <span class="d1-chart-subtitle">1,250 total · BHSF Portfolio</span>
+              </div>
+              <div class="d1-bar-chart">
+                <div class="d1-bar-row">
+                  <div class="d1-bar-label">Clinical EHR</div>
+                  <div class="d1-bar-track"><div class="d1-bar-fill" style="width:82%;"></div></div>
+                  <div class="d1-bar-count">312</div>
+                </div>
+                <div class="d1-bar-row">
+                  <div class="d1-bar-label">Imaging / PACS</div>
+                  <div class="d1-bar-track"><div class="d1-bar-fill accent" style="width:18%;"></div></div>
+                  <div class="d1-bar-count">67</div>
+                </div>
+                <div class="d1-bar-row">
+                  <div class="d1-bar-label">Revenue Cycle</div>
+                  <div class="d1-bar-track"><div class="d1-bar-fill" style="width:54%;"></div></div>
+                  <div class="d1-bar-count">205</div>
+                </div>
+                <div class="d1-bar-row">
+                  <div class="d1-bar-label">Infrastructure</div>
+                  <div class="d1-bar-track"><div class="d1-bar-fill" style="width:38%;"></div></div>
+                  <div class="d1-bar-count">144</div>
+                </div>
+                <div class="d1-bar-row">
+                  <div class="d1-bar-label">Analytics / BI</div>
+                  <div class="d1-bar-track"><div class="d1-bar-fill" style="width:25%;"></div></div>
+                  <div class="d1-bar-count">94</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DIRECTION 2: GLASS PLATFORM -->
+  <!-- ============================================================ -->
+  <div class="direction-col">
+    <div class="direction-label">
+      <h2>Direction 2 — Glass Platform</h2>
+      <p>Light, airy, elevated. Linear meets Vercel. Accent: #00A8CC teal.</p>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="url-bar">https://appgraph.baptisthealth.net/analytics</div>
+      </div>
+      <div class="d2-app">
+        <div class="d2-bg-blob d2-bg-blob-1"></div>
+        <div class="d2-bg-blob d2-bg-blob-2"></div>
+        <!-- Sidebar -->
+        <div class="d2-sidebar">
+          <div class="d2-sidebar-header">
+            <div class="d2-logo-mark">
+              <div class="d2-logo-icon">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="5" cy="5" r="2" fill="white"/>
+                  <circle cx="11" cy="5" r="2" fill="white" opacity="0.7"/>
+                  <circle cx="8" cy="11" r="2" fill="white" opacity="0.85"/>
+                  <line x1="5" y1="5" x2="11" y2="5" stroke="white" stroke-width="1" opacity="0.4"/>
+                  <line x1="5" y1="5" x2="8" y2="11" stroke="white" stroke-width="1" opacity="0.4"/>
+                  <line x1="11" y1="5" x2="8" y2="11" stroke="white" stroke-width="1" opacity="0.4"/>
+                </svg>
+              </div>
+              <div>
+                <div class="d2-logo-text">AppGraph</div>
+                <div class="d2-logo-sub">KSquare Group</div>
+              </div>
+            </div>
+          </div>
+          <nav class="d2-nav">
+            <div class="d2-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1.5" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1.5" fill="currentColor" opacity="0.6"/><rect x="1" y="8" width="5" height="5" rx="1.5" fill="currentColor" opacity="0.6"/><rect x="8" y="8" width="5" height="5" rx="1.5" fill="currentColor" opacity="0.4"/></svg>
+              Dashboard
+            </div>
+            <div class="d2-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><line x1="9" y1="9" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Query
+            </div>
+            <div class="d2-nav-item active">
+              <svg viewBox="0 0 14 14" fill="none"><polyline points="1,10 4,6 7,8 10,4 13,2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Analytics
+            </div>
+            <div class="d2-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="2" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="5" y="8" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><line x1="4" y1="6" x2="4" y2="7" stroke="currentColor" stroke-width="1"/><line x1="10" y1="6" x2="10" y2="7" stroke="currentColor" stroke-width="1"/><line x1="4" y1="7" x2="7" y2="9" stroke="currentColor" stroke-width="1"/><line x1="10" y1="7" x2="9" y2="9" stroke="currentColor" stroke-width="1"/></svg>
+              Redundancy
+            </div>
+            <div class="d2-nav-item">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="3" x2="5" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="3" x2="9" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1" opacity="0.6"/></svg>
+              Applications
+            </div>
+          </nav>
+          <div class="d2-sidebar-footer">
+            <div class="d2-user-tag">Baptist Health SF</div>
+          </div>
+        </div>
+        <!-- Main Content -->
+        <div class="d2-main">
+          <div class="d2-topbar">
+            <div class="d2-page-title">Analytics Dashboard</div>
+            <span class="d2-pill">Live · 1,250 apps synced</span>
+          </div>
+          <div class="d2-content">
+            <div class="d2-metrics-row">
+              <div class="d2-metric-card">
+                <div class="d2-metric-icon d2-metric-icon-1">
+                  <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="#1D3269" opacity="0.7"/><rect x="8" y="1" width="5" height="5" rx="1" fill="#1D3269" opacity="0.4"/><rect x="1" y="8" width="5" height="5" rx="1" fill="#1D3269" opacity="0.4"/><rect x="8" y="8" width="5" height="5" rx="1" fill="#1D3269" opacity="0.25"/></svg>
+                </div>
+                <div class="d2-metric-label">Total Applications</div>
+                <div class="d2-metric-value">1,250</div>
+                <div class="d2-metric-sub">14 facilities</div>
+              </div>
+              <div class="d2-metric-card">
+                <div class="d2-metric-icon d2-metric-icon-2">
+                  <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="#00A8CC" stroke-width="1.5"/><polyline points="4,7 6,9 10,5" stroke="#00A8CC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="d2-metric-label">Imaging Apps</div>
+                <div class="d2-metric-value" style="color:#00A8CC;">67</div>
+                <div class="d2-metric-sub">PACS, RIS + 5 types</div>
+              </div>
+              <div class="d2-metric-card">
+                <div class="d2-metric-icon d2-metric-icon-3">
+                  <svg viewBox="0 0 14 14" fill="none"><path d="M7 2L8.5 5.5L12 6L9.5 8.5L10 12L7 10.5L4 12L4.5 8.5L2 6L5.5 5.5Z" stroke="#F59E0B" stroke-width="1.2" fill="none"/></svg>
+                </div>
+                <div class="d2-metric-label">Redundancy Clusters</div>
+                <div class="d2-metric-value" style="color:#F59E0B;">5</div>
+                <div class="d2-metric-sub">Flagged for review</div>
+              </div>
+            </div>
+            <div class="d2-chart-card">
+              <div class="d2-chart-title">
+                Application Distribution by Category
+                <span class="d2-chart-tag">BHSF Portfolio</span>
+              </div>
+              <div class="d2-bar-chart">
+                <div class="d2-bar-row">
+                  <div class="d2-bar-label">Clinical EHR</div>
+                  <div class="d2-bar-track"><div class="d2-bar-fill" style="width:82%;"></div></div>
+                  <div class="d2-bar-count">312</div>
+                </div>
+                <div class="d2-bar-row">
+                  <div class="d2-bar-label">Imaging / PACS</div>
+                  <div class="d2-bar-track"><div class="d2-bar-fill alt" style="width:18%;"></div></div>
+                  <div class="d2-bar-count">67</div>
+                </div>
+                <div class="d2-bar-row">
+                  <div class="d2-bar-label">Revenue Cycle</div>
+                  <div class="d2-bar-track"><div class="d2-bar-fill" style="width:54%;"></div></div>
+                  <div class="d2-bar-count">205</div>
+                </div>
+                <div class="d2-bar-row">
+                  <div class="d2-bar-label">Infrastructure</div>
+                  <div class="d2-bar-track"><div class="d2-bar-fill alt" style="width:38%;"></div></div>
+                  <div class="d2-bar-count">144</div>
+                </div>
+                <div class="d2-bar-row">
+                  <div class="d2-bar-label">Analytics / BI</div>
+                  <div class="d2-bar-track"><div class="d2-bar-fill" style="width:25%;"></div></div>
+                  <div class="d2-bar-count">94</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DIRECTION 3: ENTERPRISE BOLD -->
+  <!-- ============================================================ -->
+  <div class="direction-col">
+    <div class="direction-label">
+      <h2>Direction 3 — Enterprise Bold</h2>
+      <p>Strong hierarchy, decisive. Salesforce meets ServiceNow. Accent: #4A90E2.</p>
+    </div>
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="url-bar">https://appgraph.baptisthealth.net/analytics</div>
+      </div>
+      <div class="d3-app">
+        <!-- Sidebar -->
+        <div class="d3-sidebar">
+          <div class="d3-sidebar-header">
+            <div class="d3-logo-mark">
+              <div class="d3-logo-icon">
+                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="5" cy="5" r="2.5" fill="white"/>
+                  <circle cx="13" cy="5" r="2.5" fill="white" opacity="0.65"/>
+                  <circle cx="9" cy="13" r="2.5" fill="white" opacity="0.85"/>
+                  <line x1="5" y1="5" x2="13" y2="5" stroke="white" stroke-width="1.2" opacity="0.45"/>
+                  <line x1="5" y1="5" x2="9" y2="13" stroke="white" stroke-width="1.2" opacity="0.45"/>
+                  <line x1="13" y1="5" x2="9" y2="13" stroke="white" stroke-width="1.2" opacity="0.45"/>
+                </svg>
+              </div>
+              <div>
+                <div class="d3-logo-text">AppGraph</div>
+                <span class="d3-logo-sub">KSquare Group</span>
+              </div>
+            </div>
+          </div>
+          <nav class="d3-nav">
+            <div class="d3-nav-section">Navigation</div>
+            <div class="d3-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.8"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.3"/></svg>
+              Dashboard
+            </div>
+            <div class="d3-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Query
+            </div>
+            <div class="d3-nav-item active">
+              <svg viewBox="0 0 15 15" fill="none"><polyline points="1,11 5,7 8,9 11,5 14,2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              Analytics
+            </div>
+            <div class="d3-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="8.5" y="2" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="5.5" y="8.5" width="4.5" height="4.5" rx="1" stroke="currentColor" stroke-width="1.5"/><line x1="4.25" y1="6.5" x2="4.25" y2="7.5" stroke="currentColor" stroke-width="1.2"/><line x1="10.75" y1="6.5" x2="10.75" y2="7.5" stroke="currentColor" stroke-width="1.2"/><line x1="4.25" y1="7.5" x2="7.75" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="10.75" y1="7.5" x2="8.25" y2="10" stroke="currentColor" stroke-width="1.2"/></svg>
+              Redundancy
+            </div>
+            <div class="d3-nav-item">
+              <svg viewBox="0 0 15 15" fill="none"><rect x="2" y="3" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="5.5" y1="3" x2="5.5" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9.5" y1="3" x2="9.5" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="7.5" x2="11" y2="7.5" stroke="currentColor" stroke-width="1" opacity="0.6"/></svg>
+              Applications
+            </div>
+          </nav>
+          <div class="d3-sidebar-footer">
+            <div class="d3-user-info">
+              <div class="d3-avatar">BH</div>
+              <div class="d3-user-tag">Baptist Health SF</div>
+            </div>
+          </div>
+        </div>
+        <!-- Main Content -->
+        <div class="d3-main">
+          <div class="d3-topbar">
+            <div class="d3-breadcrumb">
+              <span class="d3-breadcrumb-item">Home</span>
+              <span class="d3-breadcrumb-sep">/</span>
+              <span class="d3-breadcrumb-current">Analytics Dashboard</span>
+            </div>
+            <div class="d3-topbar-actions">
+              <button class="d3-btn d3-btn-outline">Export</button>
+              <button class="d3-btn d3-btn-primary">Run Query</button>
+            </div>
+          </div>
+          <div class="d3-content">
+            <div class="d3-section-heading">Analytics Dashboard</div>
+            <div class="d3-section-sub">Baptist Health South Florida — 1,250 applications across 14 facilities</div>
+            <div class="d3-metrics-row">
+              <div class="d3-metric-card d3-metric-card-1">
+                <div class="d3-metric-label">Total Applications</div>
+                <div class="d3-metric-value">1,250</div>
+                <div class="d3-metric-meta">
+                  <span class="d3-trend-up">+23</span> since last quarter
+                </div>
+              </div>
+              <div class="d3-metric-card d3-metric-card-2">
+                <div class="d3-metric-label">Imaging Apps</div>
+                <div class="d3-metric-value" style="color:#1D3269;">67</div>
+                <div class="d3-metric-meta">PACS, RIS, VNA + more</div>
+              </div>
+              <div class="d3-metric-card d3-metric-card-3">
+                <div class="d3-metric-label">Redundancy Clusters</div>
+                <div class="d3-metric-value" style="color:#DC2626;">5</div>
+                <div class="d3-metric-meta" style="color:#DC2626; font-weight:600;">Action required</div>
+              </div>
+            </div>
+            <div class="d3-chart-card">
+              <div class="d3-chart-header">
+                <div class="d3-chart-title">Application Distribution by Category</div>
+                <div class="d3-chart-meta">BHSF IT Portfolio · 1,250 apps</div>
+              </div>
+              <div class="d3-chart-body">
+                <div class="d3-bar-chart">
+                  <div class="d3-bar-row">
+                    <div class="d3-bar-label">Clinical EHR</div>
+                    <div class="d3-bar-track"><div class="d3-bar-fill d3-bar-fill-1" style="width:82%;"></div></div>
+                    <div class="d3-bar-count">312</div>
+                  </div>
+                  <div class="d3-bar-row">
+                    <div class="d3-bar-label">Revenue Cycle</div>
+                    <div class="d3-bar-track"><div class="d3-bar-fill d3-bar-fill-2" style="width:54%;"></div></div>
+                    <div class="d3-bar-count">205</div>
+                  </div>
+                  <div class="d3-bar-row">
+                    <div class="d3-bar-label">Infrastructure</div>
+                    <div class="d3-bar-track"><div class="d3-bar-fill d3-bar-fill-3" style="width:38%;"></div></div>
+                    <div class="d3-bar-count">144</div>
+                  </div>
+                  <div class="d3-bar-row">
+                    <div class="d3-bar-label">Analytics / BI</div>
+                    <div class="d3-bar-track"><div class="d3-bar-fill d3-bar-fill-4" style="width:25%;"></div></div>
+                    <div class="d3-bar-count">94</div>
+                  </div>
+                  <div class="d3-bar-row">
+                    <div class="d3-bar-label">Imaging / PACS</div>
+                    <div class="d3-bar-track"><div class="d3-bar-fill d3-bar-fill-5" style="width:18%;"></div></div>
+                    <div class="d3-bar-count">67</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

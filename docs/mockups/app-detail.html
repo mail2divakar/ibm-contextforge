@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Detail — 3D Scanner | IT Knowledge Graph</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0B1525;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* ─── Browser Chrome ─── */
+  .browser-chrome {
+    width: 1440px;
+    height: 900px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 32px 96px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .browser-bar {
+    background: #1E2433;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .browser-dot.red   { background: #FF5F57; }
+  .browser-dot.amber { background: #FFBD2E; }
+  .browser-dot.green { background: #28CA41; }
+  .browser-url {
+    flex: 1;
+    margin-left: 12px;
+    background: #2D3348;
+    border-radius: 6px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 6px;
+    max-width: 560px;
+  }
+  .lock-icon { color: #6B7280; font-size: 10px; }
+  .url-text { font-size: 12px; color: #9CA3AF; font-family: 'Inter', monospace; }
+
+  /* ─── App Shell ─── */
+  .app-shell {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background: #F8FAFC;
+    position: relative;
+  }
+
+  /* ─── Glassmorphism Sidebar ─── */
+  .sidebar {
+    width: 64px;
+    background: linear-gradient(180deg, #1D3269 0%, #162550 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    gap: 4px;
+    flex-shrink: 0;
+    z-index: 10;
+    position: relative;
+  }
+  .sidebar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .sidebar-logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #00A8CC, #0077A8);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,168,204,0.4);
+  }
+
+  .nav-item {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+    color: rgba(255,255,255,0.5);
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+  .nav-item.active {
+    background: rgba(0,168,204,0.18);
+    color: #00A8CC;
+  }
+  .nav-item.active::after {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 24px;
+    background: #00A8CC;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .sidebar-spacer { flex: 1; }
+
+  .nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4F6BAD, #2E4A8A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    margin-top: 8px;
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+
+  /* ─── Main Content (dimmed base) ─── */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    opacity: 0.4;
+    pointer-events: none;
+    user-select: none;
+    background: #F8FAFC;
+  }
+
+  /* Top bar of the Query screen */
+  .top-bar {
+    height: 56px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .top-bar-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D3269;
+  }
+  .top-bar-spacer { flex: 1; }
+  .top-bar-badge {
+    background: #EFF6FF;
+    color: #1D3269;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid #BFDBFE;
+  }
+
+  /* Query input area */
+  .query-area {
+    padding: 20px 24px 16px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    flex-shrink: 0;
+  }
+  .query-input-wrap {
+    background: #F8FAFC;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+  }
+  .query-icon { font-size: 16px; color: #9CA3AF; }
+  .query-text { font-size: 14px; color: #374151; }
+  .query-cursor {
+    width: 1.5px; height: 16px;
+    background: #1D3269;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* Filter chips */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    background: #EFF6FF;
+    color: #1D3269;
+    border: 1px solid #BFDBFE;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Results area */
+  .results-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+  .results-meta {
+    font-size: 12px;
+    color: #6B7280;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .result-table {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .result-table thead tr {
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .result-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .result-table td {
+    padding: 11px 14px;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 1px solid #F1F5F9;
+  }
+  .result-table tr:last-child td { border-bottom: none; }
+  .result-table tr.selected td { background: #EFF6FF; }
+
+  .pill-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .pill-green { background: #DCFCE7; color: #15803D; }
+  .pill-navy  { background: #EFF6FF; color: #1D3269; border: 1px solid #BFDBFE; }
+  .pill-teal  { background: #E0F7FA; color: #007A96; border: 1px solid #B2EBF2; }
+
+  /* ─── Dim overlay ─── */
+  .dim-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.25);
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  /* ─── Detail Panel ─── */
+  .detail-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 480px;
+    background: #FFFFFF;
+    border-left: 1px solid #E2E8F0;
+    box-shadow: -8px 0 40px rgba(29, 50, 105, 0.12);
+    display: flex;
+    flex-direction: column;
+    z-index: 30;
+    overflow: hidden;
+    animation: slideIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+  }
+
+  /* Panel Header */
+  .panel-header {
+    padding: 24px;
+    border-bottom: 1px solid #E2E8F0;
+    flex-shrink: 0;
+    background: #FFFFFF;
+  }
+
+  .panel-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .panel-app-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1D3269;
+    line-height: 1.2;
+  }
+
+  .panel-app-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+    margin-top: 3px;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+  }
+
+  .panel-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    color: #6B7280;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1;
+    transition: background 0.12s, color 0.12s;
+  }
+  .panel-close-btn:hover { background: #FEE2E2; color: #DC2626; border-color: #FECACA; }
+
+  .panel-pills-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.1px;
+  }
+  .badge-green {
+    background: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+  }
+  .badge-navy {
+    background: #1D3269;
+    color: #FFFFFF;
+  }
+  .badge-teal {
+    background: #E0F7FA;
+    color: #007A96;
+    border: 1px solid #B2EBF2;
+  }
+
+  /* Panel Body */
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    scrollbar-width: thin;
+    scrollbar-color: #E2E8F0 transparent;
+  }
+  .panel-body::-webkit-scrollbar { width: 5px; }
+  .panel-body::-webkit-scrollbar-track { background: transparent; }
+  .panel-body::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+
+  /* Panel Sections */
+  .panel-section {
+    margin-bottom: 28px;
+  }
+  .panel-section:last-child { margin-bottom: 0; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1D3269;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #E2E8F0;
+  }
+
+  /* Field rows */
+  .field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 14px;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field-value {
+    font-size: 13px;
+    color: #1E293B;
+    line-height: 1.5;
+  }
+  .field-value.muted {
+    color: #9CA3AF;
+    font-style: italic;
+  }
+  .field-value.description {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.65;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 2px;
+  }
+
+  /* Ownership Grid */
+  .ownership-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .ownership-cell {
+    padding: 12px 14px;
+    border-right: 1px solid #E2E8F0;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .ownership-cell:nth-child(even) { border-right: none; }
+  .ownership-cell:nth-last-child(-n+2) { border-bottom: none; }
+  .ownership-cell.full-width {
+    grid-column: 1 / -1;
+    border-right: none;
+  }
+  .ownership-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+  .ownership-value {
+    font-size: 13px;
+    color: #1E293B;
+    font-weight: 500;
+  }
+
+  .baptist-managed-no {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #B45309;
+  }
+  .warning-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #F59E0B;
+    flex-shrink: 0;
+  }
+
+  .last-updated-cell {
+    font-size: 12px;
+    color: #6B7280;
+    font-style: italic;
+  }
+
+  /* Graph Relationships */
+  .graph-chips-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .graph-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .graph-chip:hover { opacity: 0.85; transform: translateY(-1px); }
+  .graph-chip.chip-teal {
+    background: #E0F7FA;
+    color: #007A96;
+    border: 1px solid #80DEEA;
+  }
+  .graph-chip.chip-navy {
+    background: #EFF6FF;
+    color: #1D3269;
+    border: 1px solid #BFDBFE;
+  }
+  .chip-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9CA3AF;
+    margin-right: 2px;
+  }
+
+  .relationship-hint {
+    background: linear-gradient(135deg, #F0F9FF, #E0F7FA);
+    border: 1px solid #B2EBF2;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .relationship-hint-text {
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.4;
+  }
+  .relationship-hint-text strong { color: #1D3269; font-weight: 600; }
+  .view-cluster-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: #00A8CC;
+    white-space: nowrap;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .view-cluster-link:hover { text-decoration: underline; }
+
+  /* Panel Footer */
+  .panel-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #FFFFFF;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-secondary {
+    background: #FFFFFF;
+    color: #1D3269;
+    border: 1.5px solid #E2E8F0;
+  }
+  .btn-secondary:hover { background: #F8FAFC; border-color: #CBD5E1; }
+  .btn-primary {
+    background: linear-gradient(135deg, #00A8CC, #0077A8);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0,168,204,0.3);
+    flex: 1;
+  }
+  .btn-primary:hover { box-shadow: 0 4px 14px rgba(0,168,204,0.45); transform: translateY(-1px); }
+
+  /* Divider dot */
+  .footer-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    flex-shrink: 0;
+  }
+
+  /* ─── Scroll helper ─── */
+  .scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 4px;
+    padding-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Browser Chrome -->
+<div class="browser-chrome">
+
+  <!-- Browser Address Bar -->
+  <div class="browser-bar">
+    <div class="browser-dot red"></div>
+    <div class="browser-dot amber"></div>
+    <div class="browser-dot green"></div>
+    <div class="browser-url">
+      <span class="lock-icon">🔒</span>
+      <span class="url-text">app.itknowledgegraph.bhsf.net/query?app=3d-scanner</span>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app-shell">
+
+    <!-- Glassmorphism Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">🔷</div>
+
+      <div class="nav-item" title="Dashboard">🏠</div>
+      <div class="nav-item active" title="Query">💬</div>
+      <div class="nav-item" title="Graph Explorer">🕸️</div>
+      <div class="nav-item" title="Applications">📦</div>
+      <div class="nav-item" title="Analytics">📊</div>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="nav-item" title="Settings">⚙️</div>
+      <div class="nav-avatar" title="Uday V">UV</div>
+    </nav>
+
+    <!-- Main Query Screen (dimmed) -->
+    <div class="main-content">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <span class="top-bar-title">Query</span>
+        <div class="top-bar-spacer"></div>
+        <span class="top-bar-badge">1,247 Applications indexed</span>
+      </div>
+
+      <!-- Query input -->
+      <div class="query-area">
+        <div class="query-input-wrap">
+          <span class="query-icon">🔍</span>
+          <span class="query-text">Show me all Radiation Oncology apps in Production</span>
+          <div class="query-cursor"></div>
+        </div>
+        <div class="filter-row">
+          <div class="filter-chip">✓ In Production</div>
+          <div class="filter-chip">Business Process: Radiation Oncology</div>
+          <div class="filter-chip">App Type: COTS</div>
+        </div>
+      </div>
+
+      <!-- Results table -->
+      <div class="results-area">
+        <div class="results-meta">88 results · sorted by relevance</div>
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>Application</th>
+              <th>Vendor</th>
+              <th>Status</th>
+              <th>Type</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td><strong>3D Scanner</strong></td>
+              <td>ADAPTIIV Medical</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Alonso Gutierrez</td>
+            </tr>
+            <tr>
+              <td>Varian ARIA</td>
+              <td>Varian Medical</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Steven James</td>
+            </tr>
+            <tr>
+              <td>Eclipse TPS</td>
+              <td>Varian Medical</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Jose Posada</td>
+            </tr>
+            <tr>
+              <td>MOSAIQ</td>
+              <td>Elekta AB</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Maria Chen</td>
+            </tr>
+            <tr>
+              <td>TomoTherapy HiArt</td>
+              <td>Accuray</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Robert Kim</td>
+            </tr>
+            <tr>
+              <td>RayStation</td>
+              <td>RaySearch Labs</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Linda Torres</td>
+            </tr>
+            <tr>
+              <td>ARIA Oncology IS</td>
+              <td>Varian Medical</td>
+              <td><span class="pill-sm pill-green">In Production</span></td>
+              <td><span class="pill-sm pill-navy">COTS</span></td>
+              <td>Alonso Gutierrez</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Dim overlay over main content -->
+    <div class="dim-overlay"></div>
+
+    <!-- ═══ Detail Panel ═══ -->
+    <div class="detail-panel">
+
+      <!-- Panel Header -->
+      <div class="panel-header">
+        <div class="panel-header-top">
+          <div>
+            <div class="panel-app-name">3D Scanner</div>
+            <div class="panel-app-subtitle">ADAPTIIV MEDICAL TECHNOLOGIES</div>
+          </div>
+          <button class="panel-close-btn" title="Close panel">&#x2715;</button>
+        </div>
+
+        <!-- Status pills -->
+        <div class="panel-pills-row">
+          <span class="badge badge-green">&#x2713; In Production</span>
+          <span class="badge badge-navy">COTS</span>
+          <span class="badge badge-teal">Radiation Oncology</span>
+        </div>
+      </div>
+
+      <!-- Panel Body (scrollable) -->
+      <div class="panel-body">
+
+        <!-- ── Overview ── -->
+        <div class="panel-section">
+          <div class="section-title">Overview</div>
+
+          <div class="field-row">
+            <span class="field-label">Description</span>
+            <div class="field-value description">
+              The 3D SCANNER with SNC Dosimetry supports beam model verification of Varian Medical Systems. Simulates body mass for QA testing. Integrates with Radiation Oncology EHR (Varian), uses HL7 for data handling. Supports Radiation Oncology Dosimetry by streamlining workflows.
+            </div>
+          </div>
+
+          <div class="field-row">
+            <span class="field-label">Architecture Type</span>
+            <span class="field-value muted">Not specified</span>
+          </div>
+
+          <div class="field-row">
+            <span class="field-label">Application URL</span>
+            <span class="field-value muted">Not specified</span>
+          </div>
+        </div>
+
+        <!-- ── Ownership ── -->
+        <div class="panel-section">
+          <div class="section-title">Ownership</div>
+
+          <div class="ownership-grid">
+            <div class="ownership-cell">
+              <div class="ownership-label">Business Owner</div>
+              <div class="ownership-value">Alonso Gutierrez</div>
+            </div>
+            <div class="ownership-cell">
+              <div class="ownership-label">T&amp;D Application Owner</div>
+              <div class="ownership-value">Steven James</div>
+            </div>
+            <div class="ownership-cell">
+              <div class="ownership-label">Primary Engineer</div>
+              <div class="ownership-value">Jose Posada</div>
+            </div>
+            <div class="ownership-cell">
+              <div class="ownership-label">Support Group</div>
+              <div class="ownership-value" style="font-size:12px;">CARETech Sustainment<br>Radiation Oncology</div>
+            </div>
+            <div class="ownership-cell">
+              <div class="ownership-label">Company</div>
+              <div class="ownership-value">Baptist Health South Florida</div>
+            </div>
+            <div class="ownership-cell">
+              <div class="ownership-label">Baptist Managed</div>
+              <div class="ownership-value">
+                <span class="baptist-managed-no">
+                  <span class="warning-dot"></span>
+                  No
+                </span>
+              </div>
+            </div>
+            <div class="ownership-cell full-width">
+              <div class="ownership-label">Last Updated</div>
+              <div class="last-updated-cell">Feb 12, 2026 &nbsp;·&nbsp; by AmandaR</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Graph Relationships ── -->
+        <div class="panel-section">
+          <div class="section-title">Graph Relationships</div>
+
+          <div class="graph-chips-row">
+            <div>
+              <span class="chip-label">Business Process</span>
+              <span class="graph-chip chip-teal">🏥 Radiation Oncology</span>
+            </div>
+            <div>
+              <span class="chip-label">Application Type</span>
+              <span class="graph-chip chip-navy">📦 COTS</span>
+            </div>
+          </div>
+
+          <div class="relationship-hint">
+            <div class="relationship-hint-text">
+              <strong>87 other apps</strong> share the <em>Radiation Oncology</em> business process cluster.
+            </div>
+            <a href="#" class="view-cluster-link">View cluster &#x2192;</a>
+          </div>
+        </div>
+
+      </div>
+      <!-- /panel-body -->
+
+      <!-- Panel Footer (sticky) -->
+      <div class="panel-footer">
+        <button class="btn btn-secondary">&#x1F4C4; Open in CMDB</button>
+        <div class="footer-dot"></div>
+        <button class="btn btn-primary">&#x1F50D; Find similar apps</button>
+      </div>
+
+    </div>
+    <!-- /detail-panel -->
+
+  </div>
+  <!-- /app-shell -->
+
+</div>
+<!-- /browser-chrome -->
+
+</body>
+</html>
